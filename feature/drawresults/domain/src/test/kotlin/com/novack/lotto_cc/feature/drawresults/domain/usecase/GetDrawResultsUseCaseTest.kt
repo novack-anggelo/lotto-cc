@@ -33,6 +33,13 @@ class GetDrawResultsUseCaseTest {
     }
 
     @Test
+    fun `returns an empty list unchanged`() = runTest {
+        repository.result = DomainResult.Success(emptyList())
+
+        assertEquals(DomainResult.Success(emptyList()), getDrawResults())
+    }
+
+    @Test
     fun `passes failures through`() = runTest {
         repository.result = DomainResult.Failure(DomainError.NETWORK)
 
@@ -40,10 +47,15 @@ class GetDrawResultsUseCaseTest {
     }
 
     @Test
-    fun `loads from the repository on every call`() = runTest {
+    fun `loads fresh data from the repository on every call`() = runTest {
+        repository.result = DomainResult.Success(listOf(DrawFixtures.lotto6aus49()))
         getDrawResults()
-        getDrawResults()
+        val newer = DrawFixtures.lotto6aus49(superNumber = 3)
+        repository.result = DomainResult.Success(listOf(newer))
 
+        val result = getDrawResults()
+
+        assertEquals(DomainResult.Success(listOf(newer)), result)
         assertEquals(2, repository.calls)
     }
 }
