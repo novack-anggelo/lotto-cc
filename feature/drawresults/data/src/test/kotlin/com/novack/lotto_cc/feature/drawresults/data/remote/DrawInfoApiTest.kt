@@ -1,13 +1,9 @@
 package com.novack.lotto_cc.feature.drawresults.data.remote
 
-import com.novack.lotto_cc.core.network.buildJson
-import com.novack.lotto_cc.core.network.buildOkHttpClient
-import com.novack.lotto_cc.core.network.buildRetrofit
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import retrofit2.HttpException
-import retrofit2.create
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -22,11 +18,7 @@ class DrawInfoApiTest {
     @BeforeTest
     fun setUp() {
         server.start()
-        api = buildRetrofit(
-            client = buildOkHttpClient(isDebug = false),
-            json = buildJson(),
-            baseUrl = server.url("/public/").toString(),
-        ).create()
+        api = server.drawInfoApi()
     }
 
     @AfterTest

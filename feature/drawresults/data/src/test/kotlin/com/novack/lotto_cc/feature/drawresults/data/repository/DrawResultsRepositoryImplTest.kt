@@ -1,9 +1,7 @@
 package com.novack.lotto_cc.feature.drawresults.data.repository
 
-import com.novack.lotto_cc.core.network.buildJson
-import com.novack.lotto_cc.core.network.buildOkHttpClient
-import com.novack.lotto_cc.core.network.buildRetrofit
 import com.novack.lotto_cc.feature.drawresults.data.remote.DrawInfoApi
+import com.novack.lotto_cc.feature.drawresults.data.remote.drawInfoApi
 import com.novack.lotto_cc.feature.drawresults.data.remote.dto.LotteryDrawInfoDto
 import com.novack.lotto_cc.feature.drawresults.data.remote.readResource
 import com.novack.lotto_cc.feature.drawresults.domain.DrawFixtures
@@ -12,28 +10,25 @@ import com.novack.lotto_cc.feature.drawresults.domain.model.DomainResult
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
-import retrofit2.create
+import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class DrawResultsRepositoryImplTest {
 
     private val server = MockWebServer()
+    private val logger = RecordingLogger()
     private lateinit var repository: DrawResultsRepositoryImpl
 
     @BeforeTest
     fun setUp() {
         server.start()
-        val api: DrawInfoApi = buildRetrofit(
-            client = buildOkHttpClient(isDebug = false),
-            json = buildJson(),
-            baseUrl = server.url("/public/").toString(),
-        ).create()
-        repository = DrawResultsRepositoryImpl(api)
+        repository = DrawResultsRepositoryImpl(server.drawInfoApi(), logger)
     }
 
     @AfterTest
@@ -50,13 +45,15 @@ class DrawResultsRepositoryImplTest {
         assertEquals(DomainResult.Success(listOf(DrawFixtures.lotto6aus49(), DrawFixtures.eurojackpot())), result)
         assertEquals("/public/v1/drawinfo/aggregated/6aus49,eurojackpot", server.takeRequest().url.encodedPath)
         assertEquals(1, server.requestCount)
+        assertTrue(logger.messages.isEmpty())
     }
 
     @Test
-    fun `http error is a server error`() = runTest {
+    fun `http error is a server error and is logged`() = runTest {
         server.enqueue(MockResponse.Builder().code(503).build())
 
         assertEquals(DomainResult.Failure(DomainError.SERVER), repository.getDrawResults())
+        assertEquals(listOf("HTTP 503"), logger.messages)
     }
 
     @Test
@@ -74,24 +71,32 @@ class DrawResultsRepositoryImplTest {
     }
 
     @Test
-    fun `unreachable server is a network error`() = runTest {
-        server.close()
+    fun `io failure is a network error`() = runTest {
+        val repository = DrawResultsRepositoryImpl(ThrowingApi(IOException("offline")), logger)
 
         assertEquals(DomainResult.Failure(DomainError.NETWORK), repository.getDrawResults())
     }
 
     @Test
     fun `unexpected exceptions are unknown errors`() = runTest {
-        val repository = DrawResultsRepositoryImpl(ThrowingApi(IllegalStateException("boom")))
+        val repository = DrawResultsRepositoryImpl(ThrowingApi(IllegalStateException("boom")), logger)
 
         assertEquals(DomainResult.Failure(DomainError.UNKNOWN), repository.getDrawResults())
     }
 
     @Test
     fun `cancellation is rethrown, not turned into an error`() = runTest {
-        val repository = DrawResultsRepositoryImpl(ThrowingApi(CancellationException("cancelled")))
+        val repository = DrawResultsRepositoryImpl(ThrowingApi(CancellationException("cancelled")), logger)
 
         assertFailsWith<CancellationException> { repository.getDrawResults() }
+        assertTrue(logger.messages.isEmpty())
+    }
+
+    private class RecordingLogger : FailureLogger {
+        val messages = mutableListOf<String>()
+        override fun log(message: String, cause: Throwable?) {
+            messages += message
+        }
     }
 
     private class ThrowingApi(private val error: Throwable) : DrawInfoApi {
