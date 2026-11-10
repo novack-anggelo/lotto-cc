@@ -27,3 +27,4 @@ rootProject.name = "lotto-cc"
 include(":app")
 include(":feature:drawresults:domain")
 include(":core:network")
+include(":feature:drawresults:data")
