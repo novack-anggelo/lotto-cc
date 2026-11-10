@@ -9,10 +9,10 @@ import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
 
 @Preview
 @Composable
-private fun LotteryBallStylesPreview() {
+private fun LotteryBallPreview() {
     LottoTheme {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            BallStyle.entries.forEach { LotteryBall(number = 42, style = it) }
+            listOf(7, 42).forEach { LotteryBall(number = it) }
         }
     }
 }
