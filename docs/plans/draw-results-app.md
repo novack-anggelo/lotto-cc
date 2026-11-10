@@ -70,18 +70,21 @@ The codebase itself is the showcase: Clean Architecture, modularisation, MVVM, t
   │                 │                                   ▲
   │                 └──► :core:designsystem             │
   └──► :feature:drawresults:data ───────────────────────┘
-                    └──► :core:network
+                    ├──► :core:network
+                    └──► :core:common (JVM) ◄── :app (AndroidLogger)
 :core:testing (JVM) — shared test utilities (MainDispatcherRule), testImplementation only
 domain testFixtures — domain fixtures + FakeDrawResultsRepository, reused via testFixtures(project(...))
+core:common testFixtures — RecordingLogger
 build-logic/ — convention plugins: lotto.android.application, lotto.android.library,
                lotto.android.library.compose, lotto.jvm.library, lotto.koin
 ```
 - **domain**: models, `DrawResultsRepository` interface, `GetDrawResultsUseCase` (one-shot `suspend` returning `DomainResult`, draws in display order), typed `DomainError`. Flows live in the ViewModel (`StateFlow`); refresh calls the use case again.
-- **data**: Retrofit `DrawInfoApi`, DTOs, DTO→domain extension mappers, `DrawResultsRepositoryImpl`, Koin `dataModule`.
+- **data**: Retrofit `DrawInfoApi`, DTOs, DTO→domain extension mappers, `DrawResultsRepositoryImpl` (logs failures via `Logger`), Koin `drawResultsDataModule`.
 - **presentation**: UI models, domain→UI extension mappers (formatting), `DrawResultsViewModel` (`StateFlow<DrawResultsUiState>`), Compose screen, Koin `presentationModule`.
 - **core:network**: OkHttp/Retrofit/Json setup + Koin `networkModule`.
+- **core:common**: platform-independent `Logger` interface (PR 7 review); Android implementation `AndroidLogger` in `:app`.
 - **core:designsystem**: theme, lottery colours, `LotteryBall` and ball-row composables.
-- **app**: `Application` (startKoin), `MainActivity`, module aggregation.
+- **app**: `Application` (startKoin), `MainActivity`, `AndroidLogger`, root Koin module composing `networkModule`, feature modules and the `Logger`.
 
 ### Domain model (as built in PR 3)
 ```kotlin
