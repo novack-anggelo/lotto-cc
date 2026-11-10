@@ -98,7 +98,7 @@ sealed interface DomainResult<out T> { Success(data) ; Failure(error: DomainErro
 ### API
 `GET https://www.lotto24.de/public/v1/drawinfo/aggregated/6aus49,eurojackpot` (Spiel 77/SUPER 6 appended
 in the bonus goal: `…/6aus49,eurojackpot,spiel77,super6`, verified live — they return `drawResult.number` as a string,
-SUPER 6 has no jackpot). Unknown lotteries in the response are ignored; a missing `jackpot` / empty `jackpots` → no jackpot.
+SUPER 6 has no jackpot). DTO fields are all nullable so one bad entry never fails the response. Mapping (PR 6): unknown lotteries and entries missing a date, numbers, Superzahl/Eurozahlen or the next draw are dropped; the jackpot is the top prize class `WC_1` and is null when missing, malformed or zero.
 
 ### UI state & behaviour
 `Loading` → `Content(cards)` | `Error(retry)`. Refresh failure while content is shown keeps the content and shows a
