@@ -1,5 +1,7 @@
 package com.novack.lotto_cc.feature.drawresults.data.repository
 
+import com.novack.lotto_cc.core.common.logging.RecordingLogger
+import com.novack.lotto_cc.core.common.logging.RecordingLogger.Level
 import com.novack.lotto_cc.feature.drawresults.data.remote.DrawInfoApi
 import com.novack.lotto_cc.feature.drawresults.data.remote.drawInfoApi
 import com.novack.lotto_cc.feature.drawresults.data.remote.dto.LotteryDrawInfoDto
@@ -45,7 +47,7 @@ class DrawResultsRepositoryImplTest {
         assertEquals(DomainResult.Success(listOf(DrawFixtures.lotto6aus49(), DrawFixtures.eurojackpot())), result)
         assertEquals("/public/v1/drawinfo/aggregated/6aus49,eurojackpot", server.takeRequest().url.encodedPath)
         assertEquals(1, server.requestCount)
-        assertTrue(logger.messages.isEmpty())
+        assertTrue(logger.entries.isEmpty())
     }
 
     @Test
@@ -53,7 +55,9 @@ class DrawResultsRepositoryImplTest {
         server.enqueue(MockResponse.Builder().code(503).build())
 
         assertEquals(DomainResult.Failure(DomainError.SERVER), repository.getDrawResults())
-        assertEquals(listOf("HTTP 503"), logger.messages)
+        val entry = logger.entries.single()
+        assertEquals(Level.WARN, entry.level)
+        assertEquals("HTTP 503", entry.message)
     }
 
     @Test
@@ -89,14 +93,7 @@ class DrawResultsRepositoryImplTest {
         val repository = DrawResultsRepositoryImpl(ThrowingApi(CancellationException("cancelled")), logger)
 
         assertFailsWith<CancellationException> { repository.getDrawResults() }
-        assertTrue(logger.messages.isEmpty())
-    }
-
-    private class RecordingLogger : FailureLogger {
-        val messages = mutableListOf<String>()
-        override fun log(message: String, cause: Throwable?) {
-            messages += message
-        }
+        assertTrue(logger.entries.isEmpty())
     }
 
     private class ThrowingApi(private val error: Throwable) : DrawInfoApi {

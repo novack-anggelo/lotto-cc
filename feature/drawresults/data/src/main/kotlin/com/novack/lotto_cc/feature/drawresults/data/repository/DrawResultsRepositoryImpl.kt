@@ -1,5 +1,6 @@
 package com.novack.lotto_cc.feature.drawresults.data.repository
 
+import com.novack.lotto_cc.core.common.logging.Logger
 import com.novack.lotto_cc.feature.drawresults.data.mapper.toDomain
 import com.novack.lotto_cc.feature.drawresults.data.remote.DrawInfoApi
 import com.novack.lotto_cc.feature.drawresults.data.remote.LotteryIds
@@ -12,6 +13,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
+private const val TAG = "DrawResultsRepository"
 private val REQUESTED_LOTTERIES = LotteryIds.SUPPORTED.joinToString(",")
 
 /**
@@ -21,7 +23,7 @@ private val REQUESTED_LOTTERIES = LotteryIds.SUPPORTED.joinToString(",")
  */
 internal class DrawResultsRepositoryImpl(
     private val api: DrawInfoApi,
-    private val logger: FailureLogger,
+    private val logger: Logger,
 ) : DrawResultsRepository {
 
     override suspend fun getDrawResults(): DomainResult<List<LotteryDraw>> =
@@ -42,7 +44,7 @@ internal class DrawResultsRepositoryImpl(
         }
 
     private fun failure(error: DomainError, message: String, cause: Throwable? = null): DomainResult.Failure {
-        logger.log(message, cause)
+        logger.w(TAG, message, cause)
         return DomainResult.Failure(error)
     }
 }
