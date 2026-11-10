@@ -56,6 +56,7 @@ The codebase itself is the showcase: Clean Architecture, modularisation, MVVM, t
 | Merging | User merges on GitHub; I wait, then branch next goal from updated `dev` | User, round 2 |
 | Tap target | https://www.lotto24.de | User, round 3 |
 | JSON | kotlinx.serialization + Retrofit converter | Delegated (my choice) |
+| Error model | `DomainResult<T>` + enum `DomainError` (not `kotlin.Result`): typed, exhaustive `when`, no `Throwable` / `runCatching` cancellation pitfalls | User, PR 3 review |
 | Dates | `java.time.Instant` from `drawDateUtc` in the domain; formatted in the **device time zone** by presentation | User, PR 3 review |
 | Navigation | None — single screen, no nav library | Delegated |
 | Branding | No Lotto24/lottery logos; colour accents + text only | Delegated (avoid trademark assets) |
