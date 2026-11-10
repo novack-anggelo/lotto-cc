@@ -9,10 +9,11 @@ import kotlin.test.assertTrue
 class NetworkBuildersTest {
 
     @Test
-    fun `json ignores unknown keys and omits explicit nulls`() {
+    fun `json is lenient towards API changes`() {
         val configuration = buildJson().configuration
 
         assertTrue(configuration.ignoreUnknownKeys)
+        assertTrue(configuration.coerceInputValues)
         assertFalse(configuration.explicitNulls)
     }
 
@@ -23,11 +24,13 @@ class NetworkBuildersTest {
     }
 
     @Test
-    fun `client uses 15 second timeouts`() {
+    fun `client bounds every request`() {
         val client = buildOkHttpClient(isDebug = false)
 
         assertEquals(15_000, client.connectTimeoutMillis)
         assertEquals(15_000, client.readTimeoutMillis)
+        assertEquals(15_000, client.writeTimeoutMillis)
+        assertEquals(30_000, client.callTimeoutMillis)
     }
 
     @Test
