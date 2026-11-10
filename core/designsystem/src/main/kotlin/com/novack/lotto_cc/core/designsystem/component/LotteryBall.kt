@@ -2,9 +2,7 @@ package com.novack.lotto_cc.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -18,12 +16,10 @@ import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.BallColors
-import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
 
 /** How a drawn number is rendered. Superzahl and Eurozahlen must look different from regular numbers. */
 enum class BallStyle {
@@ -96,14 +92,4 @@ private fun Modifier.circle(minSize: Dp): Modifier = layout { measurable, constr
         .coerceAtMost(minOf(constraints.maxWidth, constraints.maxHeight))
     val placeable = measurable.measure(Constraints.fixed(side, side))
     layout(side, side) { placeable.place(0, 0) }
-}
-
-@Preview
-@Composable
-private fun LotteryBallStylesPreview() {
-    LottoTheme {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            BallStyle.entries.forEach { LotteryBall(number = 42, style = it) }
-        }
-    }
 }

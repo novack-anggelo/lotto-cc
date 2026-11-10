@@ -8,10 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.BallColors
-import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
 
 /**
  * The drawn numbers of one lottery in a pill-shaped row: the main [numbers] followed by the
@@ -44,21 +42,5 @@ fun DrawnNumbers(
                 contentDescription = bonusLabel?.let { label -> "$label $it" },
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun DrawnNumbersLotto6aus49Preview() {
-    LottoTheme {
-        DrawnNumbers(listOf(1, 2, 3, 14, 25, 36), listOf(4), BallStyle.Superzahl)
-    }
-}
-
-@Preview
-@Composable
-private fun DrawnNumbersEurojackpotPreview() {
-    LottoTheme {
-        DrawnNumbers(listOf(1, 2, 3, 14, 25), listOf(36, 42), BallStyle.Eurozahl)
     }
 }
