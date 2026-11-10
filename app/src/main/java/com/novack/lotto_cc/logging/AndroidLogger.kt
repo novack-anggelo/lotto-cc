@@ -1,16 +1,23 @@
 package com.novack.lotto_cc.logging
 
 import android.util.Log
+import com.novack.lotto_cc.BuildConfig
 import com.novack.lotto_cc.core.common.logging.Logger
 
-/** [Logger] backed by Logcat. Registered in the app's Koin root module. */
-class AndroidLogger : Logger {
+/**
+ * [Logger] backed by Logcat. Debug and info logs are dropped outside debug builds so release
+ * builds never expose them; warnings and errors are always logged.
+ * Bound to [Logger] in the app's Koin root module (added with the app wiring, goal 11).
+ */
+class AndroidLogger(
+    private val verbose: Boolean = BuildConfig.DEBUG,
+) : Logger {
     override fun d(tag: String, message: String) {
-        Log.d(tag, message)
+        if (verbose) Log.d(tag, message)
     }
 
     override fun i(tag: String, message: String) {
-        Log.i(tag, message)
+        if (verbose) Log.i(tag, message)
     }
 
     override fun w(tag: String, message: String, throwable: Throwable?) {
