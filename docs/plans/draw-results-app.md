@@ -142,9 +142,9 @@ Each PR: small commits, self-review with `/code-review` before push, description
 - [ ] CI green on every PR from PR 2 onwards
 
 ## Risks & open notes
-- **Bleeding-edge toolchain** (AGP 9.5.1, Kotlin 2.2.10, Gradle 9.6, JDK 27 on PATH): Koin Compiler Plugin / Kotlin
-  version compatibility will be checked in PR 1; if needed I'll bump Kotlin and note it in the PR. Gradle will use
-  a JDK 17/21 toolchain via foojay if JDK 27 is unsupported.
+- **Bleeding-edge toolchain** (AGP 9.5.1, Gradle 9.6): resolved in PR 1. Kotlin bumped 2.2.10 → 2.4.20 (newest
+  version supported by Koin Compiler Plugin 1.2.3); the Gradle daemon runs on JDK 25 (`gradle-daemon-jvm.properties`),
+  bytecode targets JVM 17.
 - **PR 1 size**: build-logic + catalog may approach 400 lines; will split if exceeded.
 - **Live API dependency**: tests never hit the network (fixtures + MockWebServer).
 - The case-study PDF stays untracked (not committed).

@@ -7,7 +7,7 @@ play the next draw.
 > 🚧 Work in progress. The app is built goal by goal in small pull requests. See the
 > [implementation plan](docs/plans/draw-results-app.md).
 
-## Tech stack
+## Tech stack (target)
 - Kotlin, Jetpack Compose, Material 3
 - MVVM + use cases (Clean Architecture), multi-module Gradle build with convention plugins
 - Coroutines & Flow
