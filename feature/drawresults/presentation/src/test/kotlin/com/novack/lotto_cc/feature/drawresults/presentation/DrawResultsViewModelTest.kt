@@ -70,6 +70,17 @@ class DrawResultsViewModelTest {
         val viewModel = viewModel()
 
         viewModel.retry()
+        advanceUntilIdle()
+
+        assertEquals(1, repository.calls)
+        assertEquals(expectedContent, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `retry while content is shown keeps the content`() = runTest(mainDispatcherRule.testDispatcher) {
+        val viewModel = viewModel()
+        advanceUntilIdle()
+
         viewModel.retry()
         advanceUntilIdle()
 
