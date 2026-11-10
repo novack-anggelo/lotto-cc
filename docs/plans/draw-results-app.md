@@ -56,7 +56,7 @@ The codebase itself is the showcase: Clean Architecture, modularisation, MVVM, t
 | Merging | User merges on GitHub; I wait, then branch next goal from updated `dev` | User, round 2 |
 | Tap target | https://www.lotto24.de | User, round 3 |
 | JSON | kotlinx.serialization + Retrofit converter | Delegated (my choice) |
-| Dates | `java.time` (`OffsetDateTime` from `drawDate`, shown in the draw's own offset) | Delegated |
+| Dates | `java.time.Instant` from `drawDateUtc` in the domain; formatted in the **device time zone** by presentation | User, PR 3 review |
 | Navigation | None — single screen, no nav library | Delegated |
 | Branding | No Lotto24/lottery logos; colour accents + text only | Delegated (avoid trademark assets) |
 | Worktrees | `~/AndroidStudioProjects/lottocc-worktrees/<task>` | Delegated |
@@ -82,18 +82,16 @@ build-logic/ — convention plugins: lotto.android.application, lotto.android.li
 - **core:designsystem**: theme, lottery colours, `LotteryBall` and ball-row composables.
 - **app**: `Application` (startKoin), `MainActivity`, module aggregation.
 
-### Domain model (sketch)
+### Domain model (as built in PR 3)
 ```kotlin
-enum class Lottery { LOTTO_6AUS49, EUROJACKPOT, SPIEL77, SUPER6 }
-data class Jackpot(val amount: BigDecimal, val currency: String)
-data class NextDraw(val date: OffsetDateTime, val jackpot: Jackpot?)
-sealed interface DrawNumbers {
-    data class Lotto6aus49(val numbers: List<Int>, val superNumber: Int) : DrawNumbers
-    data class Eurojackpot(val numbers: List<Int>, val euroNumbers: List<Int>) : DrawNumbers
-    data class Digits(val number: String) : DrawNumbers           // Spiel 77, SUPER 6
+sealed interface LotteryDraw {            // one subtype per lottery; Spiel 77 / SUPER 6 added in goal 12
+    val lastDrawTime: Instant; val numbers: List<Int>; val nextDraw: NextDraw
+    data class Lotto6aus49(..., val superNumber: Int, ...) : LotteryDraw
+    data class Eurojackpot(..., val euroNumbers: List<Int>, ...) : LotteryDraw
 }
-data class LotteryDraw(val lottery: Lottery, val lastDrawDate: OffsetDateTime,
-                       val numbers: DrawNumbers, val nextDraw: NextDraw)
+data class NextDraw(val time: Instant, val jackpot: Money?)   // jackpot null when unknown
+class Money(val amount: BigDecimal, val currencyCode: String) // equality by value
+sealed interface DomainResult<out T> { Success(data) ; Failure(error: DomainError) }
 ```
 
 ### API
