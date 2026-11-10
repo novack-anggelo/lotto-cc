@@ -70,11 +70,12 @@ The codebase itself is the showcase: Clean Architecture, modularisation, MVVM, t
   │                 └──► :core:designsystem             │
   └──► :feature:drawresults:data ───────────────────────┘
                     └──► :core:network
-:core:testing (JVM) — shared test utilities (MainDispatcherRule, fixtures), testImplementation only
+:core:testing (JVM) — shared test utilities (MainDispatcherRule), testImplementation only
+domain testFixtures — domain fixtures + FakeDrawResultsRepository, reused via testFixtures(project(...))
 build-logic/ — convention plugins: lotto.android.application, lotto.android.library,
                lotto.android.library.compose, lotto.jvm.library, lotto.koin
 ```
-- **domain**: models, `DrawResultsRepository` interface, `GetDrawResultsUseCase` (returns `Flow<…>`/`Result`), domain errors.
+- **domain**: models, `DrawResultsRepository` interface, `GetDrawResultsUseCase` (one-shot `suspend` returning `DomainResult`, draws in display order), typed `DomainError`. Flows live in the ViewModel (`StateFlow`); refresh calls the use case again.
 - **data**: Retrofit `DrawInfoApi`, DTOs, DTO→domain extension mappers, `DrawResultsRepositoryImpl`, Koin `dataModule`.
 - **presentation**: UI models, domain→UI extension mappers (formatting), `DrawResultsViewModel` (`StateFlow<DrawResultsUiState>`), Compose screen, Koin `presentationModule`.
 - **core:network**: OkHttp/Retrofit/Json setup + Koin `networkModule`.
@@ -110,13 +111,13 @@ snackbar. Jackpot shown abbreviated in the card's accent strip ("4 Mio" / "53 Mi
 |---|---|---|---|
 | 1 | `feature/project_setup/build_logic` | `build-logic` convention plugins; `:app` migrated to them; catalog updated (Koin, Retrofit, serialization, coroutines, test libs); template tests removed | `./gradlew assembleDebug` |
 | 2 | `feature/project_setup/ci` | GitHub Actions workflow (assemble, `test`, `lint`) on PRs to `dev`; README skeleton; this plan committed | Workflow green on the PR |
-| 3 | `feature/draw_results/domain` | `:feature:drawresults:domain` (JVM) models, repository interface, `GetDrawResultsUseCase`; `:core:testing` | Unit tests for use case |
+| 3 | `feature/draw_results/domain` | `:feature:drawresults:domain` (JVM) models, repository interface, `GetDrawResultsUseCase`; test fixtures | Unit tests for use case + `Money` |
 | 4 | `feature/draw_results/network` | `:core:network` Retrofit/OkHttp/Json + Koin `networkModule` | Build + Koin compile check |
 | 5 | `feature/draw_results/data_dtos` | `:feature:drawresults:data` DTOs + `DrawInfoApi` | JSON fixture deserialization tests |
 | 6 | `feature/draw_results/data_mapping` | DTO→domain extension mappers | Mapper unit tests (superNumber vs euroNumbers, null/empty jackpot, unknown lottery) |
 | 7 | `feature/draw_results/data_repository` | `DrawResultsRepositoryImpl`, error mapping, Koin `dataModule` | Repository tests (MockWebServer: 200, 500, IO error) |
 | 8 | `feature/draw_results/design_system` | `:core:designsystem` theme, lottery colours, `LotteryBall` (regular / Superzahl / Eurozahl) | Previews + instrumented ball tests |
-| 9 | `feature/draw_results/viewmodel` | `:feature:drawresults:presentation` UI models, domain→UI mappers (dates, jackpot), `DrawResultsViewModel` | ViewModel (Turbine) + mapper unit tests |
+| 9 | `feature/draw_results/viewmodel` | `:feature:drawresults:presentation` UI models, domain→UI mappers (dates, jackpot), `DrawResultsViewModel`; `:core:testing` (`MainDispatcherRule`) | ViewModel (Turbine) + mapper unit tests |
 | 10 | `feature/draw_results/screen` | Compose screen: cards, jackpot strip, next-draw badge, loading/error; EN+DE strings | Instrumented Compose UI tests |
 | 11 | `feature/draw_results/app_wiring` | `Application` + startKoin, `MainActivity` hosts screen, template theme removed | App runs on emulator (screenshot in PR) |
 | 12 | `feature/additional_lotteries/spiel77_super6` | Vertical slice: request + map + render Spiel 77 / SUPER 6 on 6aus49 card | Mapper/VM unit tests + UI test |
