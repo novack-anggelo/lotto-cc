@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.lotto.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.lotto.koin)
 }
 
 android {
