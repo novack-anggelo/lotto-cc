@@ -1,7 +1,6 @@
 package com.novack.lotto_cc.core.designsystem.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -21,15 +20,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.BallColors
 
-/** How a drawn number is rendered. Superzahl and Eurozahlen must look different from regular numbers. */
+/**
+ * What a drawn number is. Bonus numbers are set apart by their group in [DrawnNumbers], not by the
+ * ball itself; the style is exposed to accessibility and UI tests via [BallStyleKey].
+ */
 enum class BallStyle {
     /** Main numbers of any lottery. */
     Regular,
 
-    /** The single LOTTO 6aus49 Superzahl: outlined ball. */
+    /** The single LOTTO 6aus49 Superzahl. */
     Superzahl,
 
-    /** The two Eurojackpot Eurozahlen: darker, bordered ball. */
+    /** The two Eurojackpot Eurozahlen. */
     Eurozahl,
 }
 
@@ -50,16 +52,6 @@ fun LotteryBall(
     style: BallStyle = BallStyle.Regular,
     contentDescription: String? = null,
 ) {
-    val background = when (style) {
-        BallStyle.Regular -> BallColors.RegularBackground
-        BallStyle.Superzahl -> BallColors.SuperzahlBackground
-        BallStyle.Eurozahl -> BallColors.EurozahlBackground
-    }
-    val border = when (style) {
-        BallStyle.Regular -> Modifier
-        BallStyle.Superzahl -> Modifier.border(2.dp, BallColors.Border, CircleShape)
-        BallStyle.Eurozahl -> Modifier.border(1.dp, BallColors.Border, CircleShape)
-    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -68,8 +60,7 @@ fun LotteryBall(
                 contentDescription?.let { this.contentDescription = it }
             }
             .circle(MinBallSize)
-            .background(background, CircleShape)
-            .then(border)
+            .background(BallColors.RegularBackground, CircleShape)
             .padding(4.dp),
     ) {
         Text(
