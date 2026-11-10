@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.kotlin
 /** JVM unit-test dependencies shared by every module. */
 internal fun Project.configureUnitTests() {
     dependencies {
-        add("testImplementation", kotlin("test"))
+        add("testImplementation", kotlin("test-junit"))
         add("testImplementation", libs.library("junit"))
         add("testImplementation", libs.library("kotlinx-coroutines-test"))
         add("testImplementation", libs.library("turbine"))

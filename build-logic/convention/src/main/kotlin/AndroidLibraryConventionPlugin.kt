@@ -15,8 +15,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
         extensions.configure<LibraryExtension> {
             configureKotlinAndroid(this)
-            defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-            lint.targetSdk = libs.version("androidTargetSdk").toInt()
+            val targetSdk = libs.version("androidTargetSdk").toInt()
+            lint.targetSdk = targetSdk
+            testOptions.targetSdk = targetSdk
         }
         configureUnitTests()
         configureInstrumentedTests()
