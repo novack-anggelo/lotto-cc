@@ -9,6 +9,8 @@ android {
 
 dependencies {
     implementation(project(":core:network"))
+    implementation(project(":feature:drawresults:domain"))
 
+    testImplementation(testFixtures(project(":feature:drawresults:domain")))
     testImplementation(libs.okhttp.mockwebserver)
 }
