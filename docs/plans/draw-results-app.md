@@ -57,6 +57,7 @@ The codebase itself is the showcase: Clean Architecture, modularisation, MVVM, t
 | Tap target | https://www.lotto24.de | User, round 3 |
 | JSON | kotlinx.serialization + Retrofit converter | Delegated (my choice) |
 | Error model | `DomainResult<T>` + enum `DomainError` (not `kotlin.Result`): typed, exhaustive `when`, no `Throwable` / `runCatching` cancellation pitfalls | User, PR 3 review |
+| Formatting | UI models keep `Instant` / `Money`; dates and jackpot are formatted when rendered with the current locale and zone (a ViewModel outlives locale changes) | Delegated, PR 9 |
 | Dates | `java.time.Instant` from `drawDateUtc` in the domain; formatted in the **device time zone** by presentation | User, PR 3 review |
 | Navigation | None — single screen, no nav library | Delegated |
 | Branding | No Lotto24/lottery logos; colour accents + text only | Delegated (avoid trademark assets) |
@@ -80,7 +81,7 @@ build-logic/ — convention plugins: lotto.android.application, lotto.android.li
 ```
 - **domain**: models, `DrawResultsRepository` interface, `GetDrawResultsUseCase` (one-shot `suspend` returning `DomainResult`, draws in display order), typed `DomainError`. Flows live in the ViewModel (`StateFlow`); refresh calls the use case again.
 - **data**: Retrofit `DrawInfoApi`, DTOs, DTO→domain extension mappers, `DrawResultsRepositoryImpl` (logs failures via `Logger`), Koin `drawResultsDataModule`.
-- **presentation**: UI models, domain→UI extension mappers (formatting), `DrawResultsViewModel` (`StateFlow<DrawResultsUiState>`), Compose screen, Koin `presentationModule`.
+- **presentation**: UI models, domain→UI extension mappers, render-time formatters (dates, jackpot), `DrawResultsViewModel` (`StateFlow<DrawResultsUiState>`), Compose screen, Koin `drawResultsPresentationModule`.
 - **core:network**: OkHttp/Retrofit/Json setup + Koin `networkModule`.
 - **core:common**: platform-independent `Logger` interface (PR 7 review); Android implementation `AndroidLogger` in `:app`.
 - **core:designsystem**: theme, lottery colours, `LotteryBall` and ball-row composables.
