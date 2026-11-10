@@ -60,6 +60,15 @@ class DrawInfoMappersTest {
     }
 
     @Test
+    fun `parses UTC dates written as Z or as an offset`() {
+        val withZ = NextDrawDto(drawDateUtc = "2023-01-25T17:25:00Z").toDomainOrNull()
+        val withOffset = NextDrawDto(drawDateUtc = "2023-01-25T18:25:00+01:00").toDomainOrNull()
+
+        assertEquals(Instant.parse("2023-01-25T17:25:00Z"), withZ?.time)
+        assertEquals(withZ, withOffset)
+    }
+
+    @Test
     fun `next draw without jackpot keeps the draw with a null jackpot`() {
         val dto = lottoDto().copy(nextDraw = NextDrawDto(drawDateUtc = "2023-01-25T17:25:00Z", jackpot = null))
 
@@ -86,6 +95,8 @@ class DrawInfoMappersTest {
             JackpotDto("EUR", mapOf("WC_1" to "six million")),
             JackpotDto("EUR", mapOf("WC_1" to "0.00")),
             JackpotDto(null, mapOf("WC_1" to "6000000.00")),
+            JackpotDto("", mapOf("WC_1" to "6000000.00")),
+            JackpotDto("euro", mapOf("WC_1" to "6000000.00")),
         ).forEach { assertNull(it.toDomainOrNull(), "expected no jackpot for $it") }
     }
 

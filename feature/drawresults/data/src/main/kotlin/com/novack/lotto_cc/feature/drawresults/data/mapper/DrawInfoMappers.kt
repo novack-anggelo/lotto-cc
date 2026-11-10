@@ -7,9 +7,10 @@ import com.novack.lotto_cc.feature.drawresults.data.remote.dto.NextDrawDto
 import com.novack.lotto_cc.feature.drawresults.domain.model.LotteryDraw
 import com.novack.lotto_cc.feature.drawresults.domain.model.Money
 import com.novack.lotto_cc.feature.drawresults.domain.model.NextDraw
-import java.math.BigDecimal
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
+import java.util.Currency
 
 /** Winning class of the top prize; its amount is the advertised jackpot. */
 private const val TOP_PRIZE_CLASS = "WC_1"
@@ -18,32 +19,34 @@ private const val TOP_PRIZE_CLASS = "WC_1"
 internal fun List<LotteryDrawInfoDto>.toDomain(): List<LotteryDraw> = mapNotNull { it.toDomainOrNull() }
 
 /**
- * Returns null when the lottery is unknown or anything needed for its card is missing or malformed:
- * last draw date, numbers, Superzahl / Eurozahlen, or next draw date.
+ * Returns null when the lottery is unknown or anything needed for its card is missing or malformed.
+ * Each lottery validates its own result shape, so lotteries with a different shape can be added
+ * without touching the others.
  */
-internal fun LotteryDrawInfoDto.toDomainOrNull(): LotteryDraw? {
-    val lastDrawTime = lastDraw?.drawDateUtc?.toInstantOrNull() ?: return null
-    val result = lastDraw.drawResult ?: return null
-    val numbers = result.numbers?.takeIf { it.isNotEmpty() } ?: return null
-    val nextDraw = nextDraw?.toDomainOrNull() ?: return null
+internal fun LotteryDrawInfoDto.toDomainOrNull(): LotteryDraw? = when (lottery) {
+    LotteryIds.LOTTO_6AUS49 -> toLotto6aus49OrNull()
+    LotteryIds.EUROJACKPOT -> toEurojackpotOrNull()
+    else -> null
+}
 
-    return when (lottery) {
-        LotteryIds.LOTTO_6AUS49 -> LotteryDraw.Lotto6aus49(
-            lastDrawTime = lastDrawTime,
-            numbers = numbers,
-            superNumber = result.superNumber ?: return null,
-            nextDraw = nextDraw,
-        )
+private fun LotteryDrawInfoDto.toLotto6aus49OrNull(): LotteryDraw.Lotto6aus49? {
+    val result = lastDraw?.drawResult ?: return null
+    return LotteryDraw.Lotto6aus49(
+        lastDrawTime = lastDraw.drawDateUtc?.toInstantOrNull() ?: return null,
+        numbers = result.numbers?.takeIf { it.isNotEmpty() } ?: return null,
+        superNumber = result.superNumber ?: return null,
+        nextDraw = nextDraw?.toDomainOrNull() ?: return null,
+    )
+}
 
-        LotteryIds.EUROJACKPOT -> LotteryDraw.Eurojackpot(
-            lastDrawTime = lastDrawTime,
-            numbers = numbers,
-            euroNumbers = result.euroNumbers?.takeIf { it.isNotEmpty() } ?: return null,
-            nextDraw = nextDraw,
-        )
-
-        else -> null
-    }
+private fun LotteryDrawInfoDto.toEurojackpotOrNull(): LotteryDraw.Eurojackpot? {
+    val result = lastDraw?.drawResult ?: return null
+    return LotteryDraw.Eurojackpot(
+        lastDrawTime = lastDraw.drawDateUtc?.toInstantOrNull() ?: return null,
+        numbers = result.numbers?.takeIf { it.isNotEmpty() } ?: return null,
+        euroNumbers = result.euroNumbers?.takeIf { it.isNotEmpty() } ?: return null,
+        nextDraw = nextDraw?.toDomainOrNull() ?: return null,
+    )
 }
 
 internal fun NextDrawDto.toDomainOrNull(): NextDraw? {
@@ -51,23 +54,26 @@ internal fun NextDrawDto.toDomainOrNull(): NextDraw? {
     return NextDraw(time = time, jackpot = jackpot?.toDomainOrNull())
 }
 
-/** The top-prize amount, or null when it is not announced (missing, malformed or zero). */
+/** The top-prize amount, or null when it is not announced (missing, malformed, zero or unknown currency). */
 internal fun JackpotDto.toDomainOrNull(): Money? {
     val amount = jackpots?.get(TOP_PRIZE_CLASS)?.toBigDecimalOrNull() ?: return null
     if (amount.signum() <= 0) return null
-    return Money(amount = amount, currencyCode = currency ?: return null)
+    val currencyCode = currency?.takeIf { it.isIsoCurrencyCode() } ?: return null
+    return Money(amount = amount, currencyCode = currencyCode)
 }
 
+/** Accepts `Z` and numeric offsets on every API level (`Instant.parse` on API 26–33 only accepts `Z`). */
 private fun String.toInstantOrNull(): Instant? =
     try {
-        Instant.parse(this)
+        OffsetDateTime.parse(this).toInstant()
     } catch (_: DateTimeParseException) {
         null
     }
 
-private fun String.toBigDecimalOrNull(): BigDecimal? =
+private fun String.isIsoCurrencyCode(): Boolean =
     try {
-        BigDecimal(this)
-    } catch (_: NumberFormatException) {
-        null
+        Currency.getInstance(this)
+        true
+    } catch (_: IllegalArgumentException) {
+        false
     }
