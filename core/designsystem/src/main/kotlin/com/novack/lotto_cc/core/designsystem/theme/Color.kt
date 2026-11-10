@@ -3,7 +3,10 @@ package com.novack.lotto_cc.core.designsystem.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
-/** Brand colours of one lottery card: the side strip with the jackpot, and the "next draw" badge. */
+/**
+ * Brand colours of one lottery card: the side strip with the jackpot, and the "next draw" badge.
+ * Every pair meets WCAG AA text contrast (>= 4.5:1).
+ */
 @Immutable
 data class LotteryColors(
     val accent: Color,
@@ -14,16 +17,16 @@ data class LotteryColors(
     companion object {
         val Lotto6aus49 = LotteryColors(
             accent = Color(0xFFFFD500),
-            onAccent = Color(0xFFD2001E),
+            onAccent = Color(0xFFB00018), // 5.2:1
             badge = Color(0xFFFFD500),
-            onBadge = Color(0xFFD2001E),
+            onBadge = Color(0xFFB00018),
         )
 
         val Eurojackpot = LotteryColors(
-            accent = Color(0xFFA8822E),
-            onAccent = Color(0xFFF9D24A),
+            accent = Color(0xFF7A5A12),
+            onAccent = Color(0xFFFFE27A), // 5.0:1
             badge = Color(0xFF2E0F04),
-            onBadge = Color(0xFFF9D24A),
+            onBadge = Color(0xFFF9D24A), // 12.1:1
         )
     }
 }
