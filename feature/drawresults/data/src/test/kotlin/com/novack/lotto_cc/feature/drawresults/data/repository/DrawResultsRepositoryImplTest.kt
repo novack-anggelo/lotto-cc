@@ -11,7 +11,9 @@ import com.novack.lotto_cc.feature.drawresults.domain.model.DomainError
 import com.novack.lotto_cc.feature.drawresults.domain.model.DomainResult
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
+import kotlinx.serialization.SerializationException
 import mockwebserver3.MockWebServer
+import retrofit2.HttpException
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.AfterTest
@@ -19,6 +21,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class DrawResultsRepositoryImplTest {
@@ -55,8 +58,7 @@ class DrawResultsRepositoryImplTest {
         server.enqueue(MockResponse.Builder().code(503).build())
 
         assertEquals(DomainResult.Failure(DomainError.SERVER), repository.getDrawResults())
-        val entry = logger.entries.single()
-        assertEquals(Level.WARN, entry.level)
+        val entry = assertLoggedWarning<HttpException>()
         assertEquals("HTTP 503", entry.message)
     }
 
@@ -65,6 +67,7 @@ class DrawResultsRepositoryImplTest {
         server.enqueue(MockResponse.Builder().body("""{"not":"a list"}""").build())
 
         assertEquals(DomainResult.Failure(DomainError.SERVER), repository.getDrawResults())
+        assertLoggedWarning<SerializationException>()
     }
 
     @Test
@@ -72,6 +75,7 @@ class DrawResultsRepositoryImplTest {
         server.enqueue(MockResponse.Builder().body("""[{"lottery":"keno"}]""").build())
 
         assertEquals(DomainResult.Failure(DomainError.SERVER), repository.getDrawResults())
+        assertEquals(Level.WARN, logger.entries.single().level)
     }
 
     @Test
@@ -79,6 +83,7 @@ class DrawResultsRepositoryImplTest {
         val repository = DrawResultsRepositoryImpl(ThrowingApi(IOException("offline")), logger)
 
         assertEquals(DomainResult.Failure(DomainError.NETWORK), repository.getDrawResults())
+        assertLoggedWarning<IOException>()
     }
 
     @Test
@@ -86,6 +91,7 @@ class DrawResultsRepositoryImplTest {
         val repository = DrawResultsRepositoryImpl(ThrowingApi(IllegalStateException("boom")), logger)
 
         assertEquals(DomainResult.Failure(DomainError.UNKNOWN), repository.getDrawResults())
+        assertLoggedWarning<IllegalStateException>()
     }
 
     @Test
@@ -94,6 +100,14 @@ class DrawResultsRepositoryImplTest {
 
         assertFailsWith<CancellationException> { repository.getDrawResults() }
         assertTrue(logger.entries.isEmpty())
+    }
+
+    /** Exactly one WARN entry was logged, carrying the original exception of type [T]. */
+    private inline fun <reified T : Throwable> assertLoggedWarning(): RecordingLogger.Entry {
+        val entry = logger.entries.single()
+        assertEquals(Level.WARN, entry.level)
+        assertIs<T>(entry.throwable)
+        return entry
     }
 
     private class ThrowingApi(private val error: Throwable) : DrawInfoApi {

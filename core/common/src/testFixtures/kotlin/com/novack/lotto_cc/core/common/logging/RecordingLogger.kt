@@ -1,28 +1,28 @@
 package com.novack.lotto_cc.core.common.logging
 
-/** [Logger] fake that records every entry for assertions. */
+/** [Logger] fake that records every entry for assertions. Thread-safe; [entries] is a snapshot. */
 class RecordingLogger : Logger {
 
     data class Entry(val level: Level, val tag: String, val message: String, val throwable: Throwable? = null)
 
     enum class Level { DEBUG, INFO, WARN, ERROR }
 
-    private val _entries = mutableListOf<Entry>()
-    val entries: List<Entry> get() = _entries
+    private val recorded = mutableListOf<Entry>()
 
-    override fun d(tag: String, message: String) {
-        _entries += Entry(Level.DEBUG, tag, message)
-    }
+    val entries: List<Entry>
+        get() = synchronized(recorded) { recorded.toList() }
 
-    override fun i(tag: String, message: String) {
-        _entries += Entry(Level.INFO, tag, message)
-    }
+    override fun d(tag: String, message: String) = record(Entry(Level.DEBUG, tag, message))
 
-    override fun w(tag: String, message: String, throwable: Throwable?) {
-        _entries += Entry(Level.WARN, tag, message, throwable)
-    }
+    override fun i(tag: String, message: String) = record(Entry(Level.INFO, tag, message))
 
-    override fun e(tag: String, message: String, throwable: Throwable?) {
-        _entries += Entry(Level.ERROR, tag, message, throwable)
+    override fun w(tag: String, message: String, throwable: Throwable?) =
+        record(Entry(Level.WARN, tag, message, throwable))
+
+    override fun e(tag: String, message: String, throwable: Throwable?) =
+        record(Entry(Level.ERROR, tag, message, throwable))
+
+    private fun record(entry: Entry) {
+        synchronized(recorded) { recorded += entry }
     }
 }

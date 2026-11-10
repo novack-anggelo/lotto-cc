@@ -5,6 +5,10 @@ plugins {
 android {
     namespace = "com.novack.lotto_cc"
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.novack.lotto_cc"
         versionCode = 1

@@ -84,7 +84,7 @@ build-logic/ — convention plugins: lotto.android.application, lotto.android.li
 - **core:network**: OkHttp/Retrofit/Json setup + Koin `networkModule`.
 - **core:common**: platform-independent `Logger` interface (PR 7 review); Android implementation `AndroidLogger` in `:app`.
 - **core:designsystem**: theme, lottery colours, `LotteryBall` and ball-row composables.
-- **app**: `Application` (startKoin), `MainActivity`, `AndroidLogger`, root Koin module composing `networkModule`, feature modules and the `Logger`.
+- **app**: `AndroidLogger` (PR 7); `Application` (startKoin), `MainActivity` and the root Koin module composing `networkModule`, feature modules and the `Logger` binding (goal 11).
 
 ### Domain model (as built in PR 3)
 ```kotlin
