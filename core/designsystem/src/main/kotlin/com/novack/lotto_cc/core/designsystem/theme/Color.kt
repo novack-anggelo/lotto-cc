@@ -33,10 +33,8 @@ data class LotteryColors(
 
 /** Ball colours are the same in light and dark theme, like real lottery balls. */
 internal object BallColors {
-    val RegularBackground = Color(0xFFEEEEEE)
-    val SuperzahlBackground = Color(0xFFFFFFFF)
-    val EurozahlBackground = Color(0xFFBDBDBD)
-    val Border = Color(0xFF616161)
+    val RegularBackground = Color(0xFFF5F5F5)
+    val AdditionalNumbers = Color(0xD3616161)
     val Content = Color(0xFF212121)
-    val RowBackground = Color(0xFFF5F5F5)
+    val RowBackground = Color(0xFFDCDBDB)
 }
