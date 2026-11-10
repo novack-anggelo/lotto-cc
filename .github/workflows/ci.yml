@@ -32,9 +32,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       # One invocation: configure once, and --continue reports every failing check.
-      # `test` covers pure JVM modules; release unit tests duplicate the debug ones.
+      # `test` also covers pure JVM modules (AGP 9 only creates debug unit-test tasks).
       - name: Assemble, unit tests & lint
-        run: ./gradlew assembleDebug test lintDebug -x testReleaseUnitTest --continue
+        run: ./gradlew assembleDebug test lintDebug --continue
 
       - name: Upload reports
         if: failure()
