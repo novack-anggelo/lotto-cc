@@ -9,6 +9,6 @@ interface DrawInfoApi {
     /** @param lotteries comma-separated lottery ids, e.g. `6aus49,eurojackpot` (see [LotteryIds]). */
     @GET("v1/drawinfo/aggregated/{lotteries}")
     suspend fun getAggregatedDrawInfo(
-        @Path("lotteries", encoded = true) lotteries: String,
+        @Path("lotteries") lotteries: String,
     ): List<LotteryDrawInfoDto>
 }
