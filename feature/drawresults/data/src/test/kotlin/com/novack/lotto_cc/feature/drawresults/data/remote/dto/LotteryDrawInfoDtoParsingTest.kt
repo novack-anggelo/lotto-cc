@@ -53,13 +53,30 @@ class LotteryDrawInfoDtoParsingTest {
     }
 
     @Test
-    fun `missing draws and results fall back to null and empty`() {
+    fun `missing fields parse to null so the mapper can tell missing from empty`() {
         val result = parse(
             """[{"lottery":"6aus49","lastDraw":{"drawDateUtc":"2023-01-21T18:25:00Z","drawResult":{}}}]""",
         ).single()
 
-        assertEquals(DrawResultDto(numbers = emptyList(), superNumber = null, euroNumbers = null), result.lastDraw?.drawResult)
+        assertEquals(DrawResultDto(numbers = null, superNumber = null, euroNumbers = null), result.lastDraw?.drawResult)
         assertNull(result.nextDraw)
+    }
+
+    @Test
+    fun `one incomplete lottery does not fail the whole response`() {
+        val result = parse(
+            """
+            [
+              {"lottery":"6aus49","lastDraw":{"drawDateUtc":"2023-01-21T18:25:00Z","drawResult":{"numbers":[1,2,3,4,5,6],"superNumber":7}}},
+              {"lottery":"spiel77","lastDraw":{"drawResult":null},"nextDraw":{"jackpot":{"jackpots":{"WC_1":null}}}}
+            ]
+            """,
+        )
+
+        assertEquals(listOf("6aus49", "spiel77"), result.map { it.lottery })
+        assertEquals(listOf(1, 2, 3, 4, 5, 6), result[0].lastDraw?.drawResult?.numbers)
+        assertNull(result[1].lastDraw?.drawResult)
+        assertEquals(mapOf("WC_1" to null), result[1].nextDraw?.jackpot?.jackpots)
     }
 
     @Test
