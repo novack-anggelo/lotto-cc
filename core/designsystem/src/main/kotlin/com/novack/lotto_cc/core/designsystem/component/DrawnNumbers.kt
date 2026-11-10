@@ -3,6 +3,7 @@ package com.novack.lotto_cc.core.designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -35,12 +36,20 @@ fun DrawnNumbers(
             .padding(2.dp),
     ) {
         numbers.forEach { LotteryBall(number = it) }
-        bonusNumbers.forEach {
-            LotteryBall(
-                number = it,
-                style = bonusStyle,
-                contentDescription = bonusLabel?.let { label -> "$label $it" },
-            )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .background(BallColors.AdditionalNumbers, RoundedCornerShape(20.dp))
+                .padding(2.dp),
+        ) {
+            bonusNumbers.forEach {
+                LotteryBall(
+                    number = it,
+                    style = bonusStyle,
+                    contentDescription = bonusLabel?.let { label -> "$label $it" },
+                )
+            }
         }
     }
 }
