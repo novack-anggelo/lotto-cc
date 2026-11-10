@@ -7,17 +7,19 @@ import org.gradle.kotlin.dsl.dependencies
 /**
  * Koin with the Koin Compiler Plugin (compile-time checked graph): `lotto.koin`.
  * Adds `koin-core` through the BOM; modules add platform artifacts (android, compose) themselves.
+ * Works in any plugin order: dependencies are added once a Kotlin JVM or Android plugin is applied.
  */
 class KoinConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("io.insert-koin.compiler.plugin")
 
-        dependencies {
-            val bom = platform(libs.library("koin-bom"))
-            add("implementation", bom)
-            add("implementation", libs.library("koin-core"))
-            add("testImplementation", bom)
-            add("testImplementation", libs.library("koin-test"))
+        listOf("org.jetbrains.kotlin.jvm", "com.android.base").forEach { baseId ->
+            pluginManager.withPlugin(baseId) {
+                dependencies {
+                    add("implementation", platform(libs.library("koin-bom")))
+                    add("implementation", libs.library("koin-core"))
+                }
+            }
         }
     }
 }
