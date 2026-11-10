@@ -33,8 +33,9 @@ jobs:
 
       # One invocation: configure once, and --continue reports every failing check.
       # `test` also covers pure JVM modules (AGP 9 only creates debug unit-test tasks).
+      # `compileReleaseKotlin` catches debug-only APIs (e.g. @Preview) used from main.
       - name: Assemble, unit tests & lint
-        run: ./gradlew assembleDebug test lintDebug --continue
+        run: ./gradlew assembleDebug compileReleaseKotlin test lintDebug --continue
 
       - name: Upload reports
         if: failure()
