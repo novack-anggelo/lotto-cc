@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.semantics.SemanticsPropertyKey
-import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -19,25 +17,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.BallColors
-
-/**
- * What a drawn number is. Bonus numbers are set apart by their group in [DrawnNumbers], not by the
- * ball itself; the style is exposed to accessibility and UI tests via [BallStyleKey].
- */
-enum class BallStyle {
-    /** Main numbers of any lottery. */
-    Regular,
-
-    /** The single LOTTO 6aus49 Superzahl. */
-    Superzahl,
-
-    /** The two Eurojackpot Eurozahlen. */
-    Eurozahl,
-}
-
-/** Exposes a ball's [BallStyle] to UI tests. */
-val BallStyleKey = SemanticsPropertyKey<BallStyle>("BallStyle")
-private var SemanticsPropertyReceiver.ballStyle by BallStyleKey
 
 private val MinBallSize = 32.dp
 
@@ -49,14 +28,12 @@ private val MinBallSize = 32.dp
 fun LotteryBall(
     number: Int,
     modifier: Modifier = Modifier,
-    style: BallStyle = BallStyle.Regular,
     contentDescription: String? = null,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .semantics(mergeDescendants = true) {
-                ballStyle = style
                 contentDescription?.let { this.contentDescription = it }
             }
             .circle(MinBallSize)

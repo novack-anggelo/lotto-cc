@@ -8,7 +8,7 @@ import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
 @Composable
 private fun DrawnNumbersLotto6aus49Preview() {
     LottoTheme {
-        DrawnNumbers(listOf(1, 2, 3, 14, 25, 36), listOf(4), BallStyle.Superzahl)
+        DrawnNumbers(listOf(1, 2, 3, 14, 25, 36), listOf(4))
     }
 }
 
@@ -16,6 +16,6 @@ private fun DrawnNumbersLotto6aus49Preview() {
 @Composable
 private fun DrawnNumbersEurojackpotPreview() {
     LottoTheme {
-        DrawnNumbers(listOf(1, 2, 3, 14, 25), listOf(36, 42), BallStyle.Eurozahl)
+        DrawnNumbers(listOf(1, 2, 3, 14, 25), listOf(36, 42))
     }
 }
