@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.novack.lotto_cc.core.designsystem.theme.BallColors
+import com.novack.lotto_cc.core.designsystem.theme.MetalBrushes
 
 /**
  * The drawn numbers of one lottery in a pill-shaped row: the main [numbers] followed by the
@@ -32,7 +32,7 @@ fun DrawnNumbers(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         itemVerticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .background(BallColors.RowBackground, RoundedCornerShape(20.dp))
+            .background(MetalBrushes.Silver, RoundedCornerShape(20.dp))
             .padding(2.dp),
     ) {
         numbers.forEach { LotteryBall(number = it) }
@@ -40,7 +40,7 @@ fun DrawnNumbers(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .background(BallColors.AdditionalNumbers, RoundedCornerShape(20.dp))
+                .background(MetalBrushes.Gunmetal, RoundedCornerShape(20.dp))
                 .padding(2.dp),
         ) {
             bonusNumbers.forEach {
