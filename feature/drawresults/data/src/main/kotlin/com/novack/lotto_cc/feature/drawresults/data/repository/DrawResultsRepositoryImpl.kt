@@ -15,8 +15,12 @@ import kotlin.coroutines.cancellation.CancellationException
 
 private const val TAG = "DrawResultsRepository"
 /** Everything the screen shows, fetched in one request. */
-private const val REQUESTED_LOTTERIES =
-    "${LotteryIds.LOTTO_6AUS49},${LotteryIds.EUROJACKPOT},${LotteryIds.SPIEL77},${LotteryIds.SUPER6}"
+private val REQUESTED_LOTTERIES = listOf(
+    LotteryIds.LOTTO_6AUS49,
+    LotteryIds.EUROJACKPOT,
+    LotteryIds.SPIEL77,
+    LotteryIds.SUPER6,
+).joinToString(",")
 
 /**
  * Network-only repository. Retrofit suspend calls are main-safe (OkHttp performs the call and

@@ -54,6 +54,16 @@ class DrawResultsRepositoryImplTest {
     }
 
     @Test
+    fun `attaches Spiel 77 and SUPER 6 from the same response to the 6aus49 draw`() = runTest {
+        server.enqueue(MockResponse.Builder().body(readResource("draw_info_with_supplementary.json")).build())
+
+        val result = repository.getDrawResults()
+
+        val lotto = DrawFixtures.lotto6aus49(spiel77 = "0312244", super6 = "112430")
+        assertEquals(DomainResult.Success(listOf(lotto, DrawFixtures.eurojackpot())), result)
+    }
+
+    @Test
     fun `http error is a server error and is logged`() = runTest {
         server.enqueue(MockResponse.Builder().code(503).build())
 
