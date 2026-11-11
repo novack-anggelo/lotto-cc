@@ -128,7 +128,7 @@ private fun SupplementaryNumber(label: String, number: String) {
         modifier = Modifier.semantics { contentDescription = description },
         text = buildAnnotatedString {
             append("$label: ")
-            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)) {
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                 append(number)
             }
         },
