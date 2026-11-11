@@ -87,4 +87,11 @@ class LotteryDrawInfoDtoParsingTest {
 
         assertNull(result.single().nextDraw?.jackpot)
     }
+
+    @Test
+    fun `parses the Spiel 77 number as a string, keeping leading zeros`() {
+        val body = """[{"lottery":"spiel77","lastDraw":{"drawDateUtc":"2026-11-07T18:25:00Z","drawResult":{"number":"0663450"}}}]"""
+
+        assertEquals("0663450", parse(body).single().lastDraw?.drawResult?.number)
+    }
 }

@@ -23,12 +23,16 @@ data class LastDrawDto(
     val drawResult: DrawResultDto? = null,
 )
 
-/** `superNumber` is only sent for 6aus49, `euroNumbers` only for Eurojackpot. */
+/**
+ * `superNumber` is only sent for 6aus49, `euroNumbers` only for Eurojackpot, and `number` only for
+ * Spiel 77 / SUPER 6 (a digit string such as `"0123456"`).
+ */
 @Serializable
 data class DrawResultDto(
     val numbers: List<Int>? = null,
     val superNumber: Int? = null,
     val euroNumbers: List<Int>? = null,
+    val number: String? = null,
 )
 
 @Serializable

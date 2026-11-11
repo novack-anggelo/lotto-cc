@@ -15,8 +15,18 @@ import java.util.Currency
 /** Winning class of the top prize; its amount is the advertised jackpot. */
 private const val TOP_PRIZE_CLASS = "WC_1"
 
-/** Maps the lotteries the app knows; unknown or incomplete entries are dropped. */
-internal fun List<LotteryDrawInfoDto>.toDomain(): List<LotteryDraw> = mapNotNull { it.toDomainOrNull() }
+/**
+ * Maps the lotteries the app knows; unknown or incomplete entries are dropped. Spiel 77 and SUPER 6
+ * are not shown on their own: their numbers are attached to the 6aus49 draw they were drawn with.
+ */
+internal fun List<LotteryDrawInfoDto>.toDomain(): List<LotteryDraw> {
+    val spiel77 = supplementaryResult(LotteryIds.SPIEL77, digits = 7)
+    val super6 = supplementaryResult(LotteryIds.SUPER6, digits = 6)
+    return mapNotNull { it.toDomainOrNull() }.map { draw ->
+        if (draw !is LotteryDraw.Lotto6aus49) return@map draw
+        draw.copy(spiel77 = spiel77?.numberFor(draw), super6 = super6?.numberFor(draw))
+    }
+}
 
 /**
  * Returns null when the lottery is unknown or anything needed for its card is missing or malformed.
@@ -47,6 +57,20 @@ private fun LotteryDrawInfoDto.toEurojackpotOrNull(): LotteryDraw.Eurojackpot? {
         euroNumbers = result.euroNumbers?.takeIf { it.isNotEmpty() } ?: return null,
         nextDraw = nextDraw?.toDomainOrNull() ?: return null,
     )
+}
+
+/** The winning number of a supplementary game (Spiel 77, SUPER 6) and when it was drawn. */
+private class SupplementaryResult(val drawTime: Instant, val number: String) {
+    /** The number only if it was drawn with [draw], so an out-of-sync result is never shown. */
+    fun numberFor(draw: LotteryDraw): String? = number.takeIf { drawTime == draw.lastDrawTime }
+}
+
+/** Null when [lottery] is missing or its number isn't exactly [digits] digits. */
+private fun List<LotteryDrawInfoDto>.supplementaryResult(lottery: String, digits: Int): SupplementaryResult? {
+    val lastDraw = firstOrNull { it.lottery == lottery }?.lastDraw ?: return null
+    val number = lastDraw.drawResult?.number?.takeIf { it.length == digits && it.all(Char::isDigit) } ?: return null
+    val drawTime = lastDraw.drawDateUtc?.toInstantOrNull() ?: return null
+    return SupplementaryResult(drawTime, number)
 }
 
 internal fun NextDrawDto.toDomainOrNull(): NextDraw? {
