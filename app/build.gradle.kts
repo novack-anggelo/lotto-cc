@@ -32,5 +32,6 @@ dependencies {
     implementation(project(":feature:drawresults:data"))
     implementation(project(":feature:drawresults:presentation"))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.koin.android)
     implementation(libs.androidx.core.ktx)
 }
