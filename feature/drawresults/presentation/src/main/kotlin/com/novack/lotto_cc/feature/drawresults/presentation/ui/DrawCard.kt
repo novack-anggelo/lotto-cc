@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.novack.lotto_cc.core.designsystem.component.DrawnNumbers
 import com.novack.lotto_cc.core.designsystem.theme.LotteryColors
+import com.novack.lotto_cc.core.designsystem.theme.Spacing
 import com.novack.lotto_cc.feature.drawresults.domain.model.Money
 import com.novack.lotto_cc.feature.drawresults.presentation.R
 import com.novack.lotto_cc.feature.drawresults.presentation.format.JackpotText
@@ -49,21 +50,35 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
 
+private val CardElevation = 4.dp
+
+/** Strip width at font scale 1. */
+private val JackpotStripWidth = 56.dp
+
+/** Above this font scale the strip stops growing; long jackpot values shrink instead. */
+private const val MaxStripFontScale = 1.5f
+
+/** Smallest size a long jackpot value ("53,3") may shrink to. */
+private val MinJackpotFontSize = 10.sp
+
+/** Horizontal run of the badge's slanted left edge. */
+private val BadgeSlant = 8.dp
+
 /** One lottery: jackpot strip on the left; name, last draw, numbers and next draw on the right. */
 @Composable
 internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
     val colors = card.lottery.colors
     ElevatedCard(
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = CardElevation),
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(Modifier.height(IntrinsicSize.Min)) {
-            // Grows with the font (up to 1.5x, so the numbers keep their room); same width on every card.
-            val stripWidth = 56.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
+            // Grows with the font, capped so the numbers keep their room; same width on every card.
+            val stripWidth = JackpotStripWidth * LocalDensity.current.fontScale.coerceAtMost(MaxStripFontScale)
             JackpotStrip(card.jackpot, colors, Modifier.width(stripWidth).fillMaxHeight())
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.weight(1f).padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(Spacing.s),
+                modifier = Modifier.weight(1f).padding(Spacing.m),
             ) {
                 Column {
                     Text(
@@ -94,7 +109,7 @@ private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modif
     Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.background(colors.accentSheen).padding(4.dp),
+        modifier = modifier.background(colors.accentSheen).padding(Spacing.xs),
     ) {
         if (jackpot == null) return@Column
         val text = rememberJackpotText(jackpot)
@@ -123,7 +138,7 @@ private fun JackpotLine(text: String, color: Color, style: TextStyle) {
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = style.fontSize),
+        autoSize = TextAutoSize.StepBased(minFontSize = MinJackpotFontSize, maxFontSize = style.fontSize),
     )
 }
 
@@ -132,8 +147,8 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
     // Wraps the badge under the label when both don't fit (narrow screens, large font).
     FlowRow(
         itemVerticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.s, Alignment.End),
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
         modifier = modifier,
     ) {
         Text(
@@ -148,15 +163,16 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .background(colors.badge, BadgeShape)
-                .padding(start = 12.dp, end = 6.dp, top = 2.dp, bottom = 2.dp),
+                // Start padding clears the slant, so wrapped text never sits on it.
+                .padding(start = BadgeSlant + Spacing.xs, end = Spacing.s, top = Spacing.xxs, bottom = Spacing.xxs),
         )
     }
 }
 
-/** A badge with a slanted left edge, like the mockup. The slant stays within the badge's start padding. */
+/** A badge with a slanted left edge, like the mockup. */
 private object BadgeShape : Shape {
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val slant = with(density) { 8.dp.toPx() }
+        val slant = with(density) { BadgeSlant.toPx() }
         return Outline.Generic(
             Path().apply {
                 moveTo(slant, 0f)
