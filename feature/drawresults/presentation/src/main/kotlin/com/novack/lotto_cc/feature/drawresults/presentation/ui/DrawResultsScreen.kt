@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.novack.lotto_cc.core.designsystem.theme.Spacing
 import com.novack.lotto_cc.feature.drawresults.presentation.DrawResultsViewModel
 import com.novack.lotto_cc.feature.drawresults.presentation.R
 import com.novack.lotto_cc.feature.drawresults.presentation.model.DrawCardUiModel
@@ -59,12 +59,12 @@ private fun DrawCards(cards: List<DrawCardUiModel>, padding: PaddingValues) {
     LazyColumn(
         // Scaffold insets go into contentPadding, so cards scroll behind the system bars.
         contentPadding = PaddingValues(
-            start = padding.calculateStartPadding(direction) + 16.dp,
-            top = padding.calculateTopPadding() + 16.dp,
-            end = padding.calculateEndPadding(direction) + 16.dp,
-            bottom = padding.calculateBottomPadding() + 16.dp,
+            start = padding.calculateStartPadding(direction) + Spacing.l,
+            top = padding.calculateTopPadding() + Spacing.l,
+            end = padding.calculateEndPadding(direction) + Spacing.l,
+            bottom = padding.calculateBottomPadding() + Spacing.l,
         ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(Spacing.l),
         modifier = Modifier.fillMaxSize(),
     ) {
         items(cards) { DrawCard(it) }
@@ -74,9 +74,9 @@ private fun DrawCards(cards: List<DrawCardUiModel>, padding: PaddingValues) {
 @Composable
 private fun ErrorMessage(reason: ErrorReason, onRetry: () -> Unit, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(Spacing.l, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(32.dp),
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(Spacing.xl),
     ) {
         Text(
             text = stringResource(reason.messageRes),
