@@ -71,9 +71,7 @@ private class SupplementaryResult(val drawTime: Instant, val number: String) {
 
 /** The first entry for [lottery] with both a number and a draw time; shown as the API sends it. */
 private fun List<LotteryDrawInfoDto>.supplementaryResult(lottery: String): SupplementaryResult? =
-    asSequence()
-        .filter { it.lottery == lottery }
-        .firstNotNullOfOrNull { it.lastDraw?.toSupplementaryResultOrNull() }
+    filter { it.lottery == lottery }.firstNotNullOfOrNull { it.lastDraw?.toSupplementaryResultOrNull() }
 
 private fun LastDrawDto.toSupplementaryResultOrNull(): SupplementaryResult? {
     val number = drawResult?.number ?: return null
