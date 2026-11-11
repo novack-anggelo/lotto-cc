@@ -61,7 +61,7 @@ private const val MaxStripFontScale = 1.5f
 /** Smallest size a long jackpot value ("53,3") may shrink to. */
 private val MinJackpotFontSize = 10.sp
 
-/** Horizontal run of the badge's slanted left edge. */
+/** Horizontal run of the badge's slanted start edge. */
 private val BadgeSlant = 8.dp
 
 /** One lottery: jackpot strip on the left; name, last draw, numbers and next draw on the right. */
@@ -169,19 +169,26 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
     }
 }
 
-/** A badge with a slanted left edge, like the mockup. */
+/** A badge with a slanted start edge, like the mockup; mirrored in right-to-left layouts. */
 private object BadgeShape : Shape {
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
         val slant = with(density) { BadgeSlant.toPx() }
-        return Outline.Generic(
+        val path = if (layoutDirection == LayoutDirection.Ltr) {
             Path().apply {
                 moveTo(slant, 0f)
                 lineTo(size.width, 0f)
                 lineTo(size.width, size.height)
                 lineTo(0f, size.height)
-                close()
-            },
-        )
+            }
+        } else {
+            Path().apply {
+                moveTo(0f, 0f)
+                lineTo(size.width - slant, 0f)
+                lineTo(size.width, size.height)
+                lineTo(0f, size.height)
+            }
+        }
+        return Outline.Generic(path.apply { close() })
     }
 }
 
