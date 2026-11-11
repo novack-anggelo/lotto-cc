@@ -11,7 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +49,10 @@ import java.util.Locale
 @Composable
 internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
     val colors = card.lottery.colors
-    Card(modifier = modifier.fillMaxWidth()) {
+    ElevatedCard(
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        modifier = modifier.fillMaxWidth(),
+    ) {
         Row(Modifier.height(IntrinsicSize.Min)) {
             // Grows with the font (up to 1.5x, so the numbers keep their room); same width on every card.
             val stripWidth = 56.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
@@ -80,13 +84,13 @@ internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
     }
 }
 
-/** The lottery's accent colour, with the next jackpot at the bottom when it is known. */
+/** The lottery's accent colour as a metal sheen, with the next jackpot at the bottom when it is known. */
 @Composable
 private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.background(colors.accent).padding(4.dp),
+        modifier = modifier.background(colors.accentSheen).padding(4.dp),
     ) {
         if (jackpot == null) return@Column
         val text = rememberJackpot(jackpot)
