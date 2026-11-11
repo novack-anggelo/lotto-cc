@@ -122,6 +122,7 @@ snackbar. Jackpot shown abbreviated in the card's accent strip ("4 Mio" / "53 Mi
 | 8 | `feature/draw_results/design_system` | `:core:designsystem` theme, lottery colours, `LotteryBall` (regular / Superzahl / Eurozahl) | Previews + instrumented ball tests |
 | 9 | `feature/draw_results/viewmodel` | `:feature:drawresults:presentation` UI models, domain→UI mappers (dates, jackpot), `DrawResultsViewModel`; `:core:testing` (`MainDispatcherRule`) | ViewModel (Turbine) + mapper unit tests |
 | 10 | `feature/draw_results/screen` | Compose screen: cards, jackpot strip, next-draw badge, loading/error; EN+DE strings | Instrumented Compose UI tests |
+| 10b | `feature/design_system/spacing` | `Spacing` scale in `:core:designsystem`; dp literals replaced by spacing steps and named component sizes (PR 10 review) | Existing UI tests; visual check |
 | 11 | `feature/draw_results/app_wiring` | `Application` + startKoin, `MainActivity` hosts screen, template theme removed | App runs on emulator (screenshot in PR) |
 | 12 | `feature/additional_lotteries/spiel77_super6` | Vertical slice: request + map + render Spiel 77 / SUPER 6 on 6aus49 card | Mapper/VM unit tests + UI test |
 | 13 | `feature/pull_to_refresh/refresh` | `PullToRefreshBox`, VM refresh state, snackbar on failure | VM unit tests + UI test |
