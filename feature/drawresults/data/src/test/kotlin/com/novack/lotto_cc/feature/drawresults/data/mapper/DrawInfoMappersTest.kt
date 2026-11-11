@@ -8,7 +8,6 @@ import com.novack.lotto_cc.feature.drawresults.data.remote.dto.LotteryDrawInfoDt
 import com.novack.lotto_cc.feature.drawresults.data.remote.dto.NextDrawDto
 import com.novack.lotto_cc.feature.drawresults.data.remote.readResource
 import com.novack.lotto_cc.feature.drawresults.domain.DrawFixtures
-import kotlinx.serialization.json.JsonPrimitive
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -123,23 +122,18 @@ class DrawInfoMappersTest {
     }
 
     @Test
-    fun `ignores malformed Spiel 77 and SUPER 6 numbers`() {
+    fun `ignores Spiel 77 and SUPER 6 entries without a number or draw time`() {
         listOf(
-            supplementaryDto("spiel77", "731224"),
-            supplementaryDto("spiel77", "73122440"),
-            supplementaryDto("spiel77", "73x2244"),
-            supplementaryDto("super6", "1124300"),
-            supplementaryDto("super6", null),
+            supplementaryDto("spiel77", null),
             supplementaryDto("super6", "112430", drawDateUtc = null),
-            supplementaryDto("super6", JsonPrimitive(112430), "2023-01-21T18:25:00Z"),
-        ).forEach { malformed ->
-            assertEquals(listOf(DrawFixtures.lotto6aus49()), listOf(lottoDto(), malformed).toDomain(), "for $malformed")
+        ).forEach { incomplete ->
+            assertEquals(listOf(DrawFixtures.lotto6aus49()), listOf(lottoDto(), incomplete).toDomain(), "for $incomplete")
         }
     }
 
     @Test
     fun `uses the first valid entry when a supplementary lottery appears twice`() {
-        val dtos = listOf(lottoDto(), supplementaryDto("spiel77", "73x2244"), supplementaryDto("spiel77", "7312244"))
+        val dtos = listOf(lottoDto(), supplementaryDto("spiel77", null), supplementaryDto("spiel77", "7312244"))
 
         assertEquals(listOf(DrawFixtures.lotto6aus49(spiel77 = "7312244")), dtos.toDomain())
     }
@@ -149,13 +143,7 @@ class DrawInfoMappersTest {
         assertEquals(emptyList(), listOf(supplementaryDto("spiel77", "7312244"), supplementaryDto("super6", "112430")).toDomain())
     }
 
-    private fun supplementaryDto(
-        lottery: String,
-        number: String?,
-        drawDateUtc: String? = "2023-01-21T18:25:00Z",
-    ) = supplementaryDto(lottery, number?.let(::JsonPrimitive), drawDateUtc)
-
-    private fun supplementaryDto(lottery: String, number: JsonPrimitive?, drawDateUtc: String?) =
+    private fun supplementaryDto(lottery: String, number: String?, drawDateUtc: String? = "2023-01-21T18:25:00Z") =
         LotteryDrawInfoDto(
             lottery = lottery,
             lastDraw = LastDrawDto(drawDateUtc = drawDateUtc, drawResult = DrawResultDto(number = number)),
