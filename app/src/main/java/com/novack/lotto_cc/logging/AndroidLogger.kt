@@ -7,7 +7,7 @@ import com.novack.lotto_cc.core.common.logging.Logger
 /**
  * [Logger] backed by Logcat. Debug and info logs are dropped outside debug builds so release
  * builds never expose them; warnings and errors are always logged.
- * Bound to [Logger] in the app's Koin root module (added with the app wiring, goal 11).
+ * Bound to [Logger] in [com.novack.lotto_cc.di.appModule].
  */
 class AndroidLogger(
     private val verbose: Boolean = BuildConfig.DEBUG,

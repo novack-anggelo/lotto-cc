@@ -21,7 +21,7 @@ private val LightColors = lightColorScheme(
     onTertiary = Color.White,
     tertiaryContainer = Color(0xFFFDDFA6),
     onTertiaryContainer = Color(0xFF261900),
-    background = Color(0xFFF7F7F7),
+    background = Color(0xFFF7F7F7), // also the app's window_background (app res/values/colors.xml)
     surface = Color.White,
     // Warm paper neutrals for cards and containers (Material's defaults are lavender).
     surfaceVariant = Color(0xFFEAE3D9),
@@ -46,7 +46,7 @@ private val DarkColors = darkColorScheme(
     onTertiary = Color(0xFF3F2E04),
     tertiaryContainer = Color(0xFF574419),
     onTertiaryContainer = Color(0xFFFDDFA6),
-    background = Color(0xFF121212),
+    background = Color(0xFF121212), // also the app's window_background (app res/values-night/colors.xml)
     surface = Color(0xFF1E1E1E),
     surfaceVariant = Color(0xFF4D4640),
     onSurfaceVariant = Color(0xFFD1C8BE),
