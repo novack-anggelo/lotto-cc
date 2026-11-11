@@ -63,8 +63,8 @@ class LotteryBallTest {
         val balls = composeRule.onAllNodes(isBall).assertCountEquals(count)
         repeat(count) { index ->
             val bounds = balls[index].bounds()
-            assertEquals("ball $index width", 32f, bounds.width.value, 0.5f)
-            assertEquals("ball $index height", 32f, bounds.height.value, 0.5f)
+            assertEquals("ball $index width", MinBallSize.value, bounds.width.value, 0.5f)
+            assertEquals("ball $index height", MinBallSize.value, bounds.height.value, 0.5f)
         }
     }
 
@@ -120,7 +120,7 @@ class LotteryBallTest {
         setContent(fontScale = 2f) { LotteryBall(number = 42) }
 
         val bounds = composeRule.onNodeWithText("42").bounds()
-        assertTrue("ball should grow beyond 32dp, was ${bounds.width}", bounds.width > 32.dp)
+        assertTrue("ball should grow beyond $MinBallSize, was ${bounds.width}", bounds.width > MinBallSize)
         assertTrue("ball should fit its number, was ${bounds.width}", bounds.width < 80.dp)
         assertEquals(bounds.width.value, bounds.height.value, 0.5f)
     }

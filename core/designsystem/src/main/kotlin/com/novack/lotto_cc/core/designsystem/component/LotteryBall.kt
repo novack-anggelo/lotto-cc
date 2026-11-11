@@ -19,7 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.BallColors
 import com.novack.lotto_cc.core.designsystem.theme.Spacing
 
-private val MinBallSize = 32.dp
+/** Smallest ball size; balls grow with the font scale. */
+internal val MinBallSize = 32.dp
 
 /**
  * A drawn number in a circle. [contentDescription] replaces the spoken number, e.g. "Superzahl 7",

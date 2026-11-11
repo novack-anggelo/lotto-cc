@@ -10,15 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.MetalBrushes
 import com.novack.lotto_cc.core.designsystem.theme.Spacing
 
 /**
- * Half the height of a one-line row, so it reads as a pill; a fixed radius (not 50%) keeps a wrapped,
- * multi-line row a rounded rectangle instead of a stadium that cuts into the corner balls.
+ * Half the height of a one-line bonus group (a minimum-size ball plus its padding), so it reads as a
+ * pill. Fixed radii (not 50%) keep larger or wrapped rows rounded rectangles, and keep the group's
+ * corners concentric with the row's.
  */
-private val RowCornerRadius = 20.dp
+private val BonusCornerRadius = MinBallSize / 2 + Spacing.xxs
+
+/** The row's corners: the bonus group's radius plus the row padding around it. */
+private val RowCornerRadius = BonusCornerRadius + Spacing.xxs
 
 /** Tags the bonus-number group, so UI tests can tell bonus balls from main ones. */
 internal const val BonusNumbersTestTag = "DrawnNumbers.bonus"
@@ -53,7 +56,7 @@ fun DrawnNumbers(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .testTag(BonusNumbersTestTag)
-                    .background(MetalBrushes.Gunmetal, RoundedCornerShape(percent = 50))
+                    .background(MetalBrushes.Gunmetal, RoundedCornerShape(BonusCornerRadius))
                     .padding(Spacing.xxs),
             ) {
                 bonusNumbers.forEach {
