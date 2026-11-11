@@ -15,8 +15,8 @@ data class LotteryColors(
     val badge: Color,
     val onBadge: Color,
 ) {
-    /** [accent] as a vertical metal sheen, for the jackpot strip. */
-    val accentSheen: Brush = verticalMetalSheen(accent)
+    /** [accent] as a slanted metal sheen that keeps [onAccent] readable, for the jackpot strip. */
+    val accentSheen: Brush = slantedMetalSheen(accent, onAccent)
 
     companion object {
         val Lotto6aus49 = LotteryColors(
