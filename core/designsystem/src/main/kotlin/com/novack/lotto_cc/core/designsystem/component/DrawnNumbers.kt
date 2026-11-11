@@ -9,19 +9,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.LayoutDirection
 import com.novack.lotto_cc.core.designsystem.theme.MetalBrushes
 import com.novack.lotto_cc.core.designsystem.theme.Spacing
 
 /**
- * Half the height of a one-line bonus group (a minimum-size ball plus its padding), so it reads as a
- * pill. Fixed radii (not 50%) keep larger or wrapped rows rounded rectangles, and keep the group's
- * corners concentric with the row's.
+ * Half the height of a one-line row: a minimum-size ball plus the bonus group's and the row's
+ * padding. Shared by the row and the bonus group's background, so their ends line up. A fixed radius
+ * (not 50%) keeps larger or wrapped rows rounded rectangles.
  */
-private val BonusCornerRadius = MinBallSize / 2 + Spacing.xxs
-
-/** The row's corners: the bonus group's radius plus the row padding around it. */
-private val RowCornerRadius = BonusCornerRadius + Spacing.xxs
+private val RowCornerRadius = MinBallSize / 2 + Spacing.xxs + Spacing.xxs
 
 /** Tags the bonus-number group, so UI tests can tell bonus balls from main ones. */
 internal const val BonusNumbersTestTag = "DrawnNumbers.bonus"
@@ -56,7 +59,7 @@ fun DrawnNumbers(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .testTag(BonusNumbersTestTag)
-                    .background(MetalBrushes.Gunmetal, RoundedCornerShape(BonusCornerRadius))
+                    .drawBehind { drawBonusBackground(bleed = Spacing.xxs.toPx()) }
                     .padding(Spacing.xxs),
             ) {
                 bonusNumbers.forEach {
@@ -67,5 +70,18 @@ fun DrawnNumbers(
                 }
             }
         }
+    }
+}
+
+/**
+ * The bonus group's background, extended by [bleed] (the row's padding) on the top, bottom and end,
+ * so it reaches the row's edges instead of being inset like the main balls.
+ */
+private fun DrawScope.drawBonusBackground(bleed: Float) {
+    val left = if (layoutDirection == LayoutDirection.Ltr) 0f else -bleed
+    val backgroundSize = Size(size.width + bleed, size.height + 2 * bleed)
+    translate(left = left, top = -bleed) {
+        val outline = RoundedCornerShape(RowCornerRadius).createOutline(backgroundSize, layoutDirection, this)
+        drawOutline(outline, MetalBrushes.Gunmetal)
     }
 }
