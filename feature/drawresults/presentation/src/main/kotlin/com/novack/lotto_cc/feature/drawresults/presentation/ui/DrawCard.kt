@@ -71,9 +71,10 @@ private val BadgeSlant = 8.dp
 
 /** One lottery: jackpot strip on the left; name, last draw, numbers and next draw on the right. */
 @Composable
-internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
+internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = card.lottery.colors
     ElevatedCard(
+        onClick = onClick,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = CardElevation),
         modifier = modifier.fillMaxWidth(),
     ) {

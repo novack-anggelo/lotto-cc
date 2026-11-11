@@ -19,5 +19,5 @@ internal class DrawCardProvider : CollectionPreviewParameterProvider<DrawCardUiM
 @Preview(showBackground = true, backgroundColor = 0xFFF7F7F7, locale = "de")
 @Composable
 private fun DrawCardPreview(@PreviewParameter(DrawCardProvider::class) card: DrawCardUiModel) {
-    LottoTheme { DrawCard(card, Modifier.padding(Spacing.l)) }
+    LottoTheme { DrawCard(card, onClick = {}, Modifier.padding(Spacing.l)) }
 }
