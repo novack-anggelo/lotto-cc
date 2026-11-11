@@ -2,6 +2,7 @@ package com.novack.lotto_cc.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
 /**
  * Static metallic sheens: alternating light and dark bands across the element's diagonal, like
@@ -26,5 +27,22 @@ internal object MetalBrushes {
         0.65f to Color(0xFF3E3E3E),
         0.85f to Color(0xFF6E6E6E),
         1.00f to Color(0xFF444444),
+    )
+}
+
+/**
+ * A vertical brushed-metal sheen in [base]'s tone: light and dark bands from the top, ending in
+ * plain [base] over the bottom fifth, so text placed there keeps [base]'s contrast.
+ */
+internal fun verticalMetalSheen(base: Color): Brush {
+    fun lighter(fraction: Float) = lerp(base, Color.White, fraction)
+    fun darker(fraction: Float) = lerp(base, Color.Black, fraction)
+    return Brush.verticalGradient(
+        0.00f to lighter(0.30f),
+        0.18f to base,
+        0.36f to darker(0.15f),
+        0.56f to lighter(0.20f),
+        0.80f to base,
+        1.00f to base,
     )
 }

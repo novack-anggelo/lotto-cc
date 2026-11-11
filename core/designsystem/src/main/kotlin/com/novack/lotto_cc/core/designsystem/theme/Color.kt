@@ -1,6 +1,7 @@
 package com.novack.lotto_cc.core.designsystem.theme
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -14,6 +15,9 @@ data class LotteryColors(
     val badge: Color,
     val onBadge: Color,
 ) {
+    /** [accent] as a vertical metal sheen, for the jackpot strip. */
+    val accentSheen: Brush = verticalMetalSheen(accent)
+
     companion object {
         val Lotto6aus49 = LotteryColors(
             accent = Color(0xFFFFD500),
