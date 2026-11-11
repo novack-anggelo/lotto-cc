@@ -126,7 +126,8 @@ class DrawResultsScreenTest {
         composeRule.onNodeWithText(string(R.string.lottery_lotto6aus49)).performClick()
         composeRule.onNodeWithText(string(R.string.lottery_eurojackpot)).performClick()
 
-        assertEquals(listOf(Lotto24Url, Lotto24Url), openedUris)
+        val url = string(R.string.lotto24_url)
+        assertEquals(listOf(url, url), openedUris)
     }
 
     @Test

@@ -54,13 +54,11 @@ internal fun DrawResultsScreen(uiState: DrawResultsUiState, onRetry: () -> Unit,
     }
 }
 
-/** Where a tap on any card leads. */
-internal const val Lotto24Url = "https://www.lotto24.de"
-
 @Composable
 private fun DrawCards(cards: List<DrawCardUiModel>, padding: PaddingValues) {
     val direction = LocalLayoutDirection.current
     val uriHandler = LocalUriHandler.current
+    val lotto24Url = stringResource(R.string.lotto24_url)
     LazyColumn(
         // Scaffold insets go into contentPadding, so cards scroll behind the system bars.
         contentPadding = PaddingValues(
@@ -72,7 +70,7 @@ private fun DrawCards(cards: List<DrawCardUiModel>, padding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(Spacing.l),
         modifier = Modifier.fillMaxSize(),
     ) {
-        items(cards) { DrawCard(it, onClick = { uriHandler.openUri(Lotto24Url) }) }
+        items(cards) { DrawCard(it, onClick = { uriHandler.openUri(lotto24Url) }) }
     }
 }
 
