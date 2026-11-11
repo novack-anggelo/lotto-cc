@@ -126,7 +126,7 @@ snackbar. Jackpot shown abbreviated in the card's accent strip ("4 Mio" / "53 Mi
 | 11 | `feature/draw_results/app_wiring` | `Application` + startKoin, `MainActivity` hosts screen, template theme removed | App runs on emulator (screenshot in PR) |
 | 12a | `feature/additional_lotteries/data` | Spiel 77 / SUPER 6: domain fields on the 6aus49 draw, request all four lotteries, attach numbers drawn with the 6aus49 draw | DTO + mapper + repository unit tests |
 | 12b | `feature/additional_lotteries/ui` | Render Spiel 77 / SUPER 6 on the 6aus49 card (as in the mockup) | UI model mapper unit tests + UI test |
-| 13 | `feature/pull_to_refresh/refresh` | `PullToRefreshBox`, VM refresh state, snackbar on failure | VM unit tests + UI test |
+| 13 | `feature/pull_to_refresh/refresh` | `PullToRefreshBox`, VM refresh state, snackbar on failure (deferred by the user; after 14) | VM unit tests + UI test |
 | 14 | `feature/website_link/open_link` | Tap card → open https://www.lotto24.de | UI test (intent / UriHandler fake) |
 | 15 | `feature/project_setup/docs` | README: architecture, module graph, how to build/test, decisions | Review |
 
