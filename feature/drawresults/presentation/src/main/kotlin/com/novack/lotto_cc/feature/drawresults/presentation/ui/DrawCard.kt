@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.TextAutoSize
@@ -93,12 +94,12 @@ internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modi
                 verticalArrangement = Arrangement.spacedBy(Spacing.s),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(Spacing.m),
+                    .padding(start = Spacing.m, top = Spacing.m),
             ) {
                 // Spiel 77 / SUPER 6 sit next to the title, and wrap under it when there's no room.
                 FlowRow(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(end = Spacing.m),
                 ) {
                     Column {
                         Text(
@@ -133,6 +134,7 @@ internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modi
                     bonusNumbers = card.bonusNumbers,
                     bonusLabel = stringResource(card.lottery.bonusLabelRes),
                 )
+                Spacer(Modifier.height(Spacing.l))
                 NextDraw(card.nextDrawTime, colors, Modifier.align(Alignment.End))
             }
         }
@@ -244,8 +246,8 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
                 .padding(
                     start = BadgeSlant + Spacing.xs,
                     end = Spacing.s,
-                    top = Spacing.xxs,
-                    bottom = Spacing.xxs
+                    top = Spacing.xs,
+                    bottom = Spacing.xs
                 ),
         )
     }
