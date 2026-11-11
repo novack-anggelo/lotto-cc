@@ -4,7 +4,10 @@ import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-/** Enables Compose and adds the BOM-aligned UI, tooling and UI-test dependencies. */
+/**
+ * Enables Compose and adds the BOM-aligned UI and UI-test dependencies. Preview and tooling are
+ * debug-only, so `@Preview` is unavailable in `main` and previews live in `src/debug`.
+ */
 internal fun Project.configureCompose(commonExtension: CommonExtension) {
     pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
     commonExtension.buildFeatures.compose = true
@@ -14,7 +17,7 @@ internal fun Project.configureCompose(commonExtension: CommonExtension) {
         add("implementation", bom)
         add("implementation", libs.library("androidx-compose-ui"))
         add("implementation", libs.library("androidx-compose-ui-graphics"))
-        add("implementation", libs.library("androidx-compose-ui-tooling-preview"))
+        add("debugImplementation", libs.library("androidx-compose-ui-tooling-preview"))
         add("implementation", libs.library("androidx-compose-material3"))
         add("debugImplementation", libs.library("androidx-compose-ui-tooling"))
         add("debugImplementation", libs.library("androidx-compose-ui-test-manifest"))
