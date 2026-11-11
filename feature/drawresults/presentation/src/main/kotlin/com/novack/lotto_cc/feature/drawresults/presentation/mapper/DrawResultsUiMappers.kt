@@ -7,7 +7,8 @@ import com.novack.lotto_cc.feature.drawresults.presentation.model.ErrorReason
 import com.novack.lotto_cc.feature.drawresults.presentation.model.Lottery
 
 internal fun LotteryDraw.toUiModel(): DrawCardUiModel = when (this) {
-    is LotteryDraw.Lotto6aus49 -> toCard(Lottery.Lotto6aus49, bonusNumbers = listOf(superNumber))
+    is LotteryDraw.Lotto6aus49 ->
+        toCard(Lottery.Lotto6aus49, bonusNumbers = listOf(superNumber)).copy(spiel77 = spiel77, super6 = super6)
     is LotteryDraw.Eurojackpot -> toCard(Lottery.Eurojackpot, bonusNumbers = euroNumbers)
 }
 

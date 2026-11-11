@@ -12,6 +12,8 @@ enum class Lottery { Lotto6aus49, Eurojackpot }
  *
  * @param bonusNumbers the Superzahl or the Eurozahlen.
  * @param jackpot null when the next jackpot is unknown; the card then hides it.
+ * @param spiel77 Spiel 77 number (LOTTO 6aus49 only); hidden when null.
+ * @param super6 SUPER 6 number (LOTTO 6aus49 only); hidden when null.
  */
 data class DrawCardUiModel(
     val lottery: Lottery,
@@ -20,4 +22,6 @@ data class DrawCardUiModel(
     val bonusNumbers: List<Int>,
     val nextDrawTime: Instant,
     val jackpot: Money?,
+    val spiel77: String? = null,
+    val super6: String? = null,
 )
