@@ -13,11 +13,18 @@ sealed interface LotteryDraw {
     val numbers: List<Int>
     val nextDraw: NextDraw
 
+    /**
+     * @param spiel77 the Spiel 77 number (7 digits) drawn with this draw; null when not available.
+     * @param super6 the SUPER 6 number (6 digits) drawn with this draw; null when not available.
+     *   Both are digit strings because leading zeros are part of the number.
+     */
     data class Lotto6aus49(
         override val lastDrawTime: Instant,
         override val numbers: List<Int>,
         val superNumber: Int,
         override val nextDraw: NextDraw,
+        val spiel77: String? = null,
+        val super6: String? = null,
     ) : LotteryDraw
 
     data class Eurojackpot(
