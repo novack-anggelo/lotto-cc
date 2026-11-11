@@ -1,6 +1,8 @@
 package com.novack.lotto_cc.feature.drawresults.presentation.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
@@ -28,11 +31,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.novack.lotto_cc.core.designsystem.component.DrawnNumbers
 import com.novack.lotto_cc.core.designsystem.theme.LotteryColors
 import com.novack.lotto_cc.feature.drawresults.domain.model.Money
@@ -93,17 +98,31 @@ private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modif
         modifier = modifier.background(colors.accentSheen).padding(4.dp),
     ) {
         if (jackpot == null) return@Column
-        val text = rememberJackpot(jackpot)
-        val description = stringResource(R.string.jackpot_description, text.replace('\n', ' '))
-        Text(
-            text = text,
-            color = colors.onAccent,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
+        val text = rememberJackpotText(jackpot)
+        val description = stringResource(R.string.jackpot_description, text.fullAmount)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clearAndSetSemantics { contentDescription = description },
-        )
+        ) {
+            if (text.millions == null) {
+                JackpotLine(text.fullAmount, colors.onAccent, MaterialTheme.typography.labelMedium)
+            } else {
+                JackpotLine(text.millions, colors.onAccent, MaterialTheme.typography.headlineSmall)
+                JackpotLine(stringResource(R.string.jackpot_unit_millions), colors.onAccent, MaterialTheme.typography.titleSmall)
+            }
+        }
     }
+}
+
+/** One bold line of the strip; long values ("53,3") shrink to fit instead of wrapping. */
+@Composable
+private fun JackpotLine(text: String, color: Color, style: TextStyle) {
+    BasicText(
+        text = text,
+        style = style.copy(color = color, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
+        maxLines = 1,
+        autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = style.fontSize),
+    )
 }
 
 @Composable
@@ -158,10 +177,7 @@ private fun rememberDrawDate(time: Instant): String {
 }
 
 @Composable
-private fun rememberJackpot(jackpot: Money): String {
+private fun rememberJackpotText(jackpot: Money): JackpotText {
     val locale = currentLocale()
-    return when (val text = remember(jackpot, locale) { jackpot.toJackpotText(locale) }) {
-        is JackpotText.Millions -> stringResource(R.string.jackpot_millions, text.millions, text.currencySymbol)
-        is JackpotText.Exact -> text.amount
-    }
+    return remember(jackpot, locale) { jackpot.toJackpotText(locale) }
 }
