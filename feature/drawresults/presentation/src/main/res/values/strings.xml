@@ -3,10 +3,9 @@
     <string name="lottery_eurojackpot" translatable="false">Eurojackpot</string>
     <string name="bonus_superzahl">Super number</string>
     <string name="bonus_eurozahl">Euro number</string>
+    <string name="jackpot_unit_millions">MILL</string>
     <string name="next_draw">Next draw:</string>
-    <!-- %1$s: amount in millions, %2$s: currency symbol -->
-    <string name="jackpot_millions">%2$s%1$s\nmillion</string>
-    <!-- %1$s: formatted jackpot. Same in German. -->
+    <!-- %1$s: full jackpot with currency. Same in German. -->
     <string name="jackpot_description" translatable="false">Jackpot: %1$s</string>
     <string name="error_no_connection">No internet connection. Check your connection and try again.</string>
     <string name="error_server">The draw results are unavailable right now. Please try again later.</string>

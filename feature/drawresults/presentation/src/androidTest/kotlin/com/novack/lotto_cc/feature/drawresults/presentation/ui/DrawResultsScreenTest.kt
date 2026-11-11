@@ -17,7 +17,6 @@ import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
 import com.novack.lotto_cc.feature.drawresults.domain.DrawFixtures
 import com.novack.lotto_cc.feature.drawresults.domain.model.NextDraw
 import com.novack.lotto_cc.feature.drawresults.presentation.R
-import com.novack.lotto_cc.feature.drawresults.presentation.format.JackpotText
 import com.novack.lotto_cc.feature.drawresults.presentation.format.toDrawDateText
 import com.novack.lotto_cc.feature.drawresults.presentation.format.toJackpotText
 import com.novack.lotto_cc.feature.drawresults.presentation.mapper.toUiModel
@@ -82,9 +81,9 @@ class DrawResultsScreenTest {
     fun jackpot_isShownWhenKnownAndHiddenWhenUnknown() {
         showContent()
 
-        val jackpot = lotto.nextDraw.jackpot!!.toJackpotText(locale) as JackpotText.Millions
-        val shown = string(R.string.jackpot_millions, jackpot.millions, jackpot.currencySymbol).replace('\n', ' ')
-        composeRule.onNodeWithContentDescription(string(R.string.jackpot_description, shown)).assertIsDisplayed()
+        val jackpot = lotto.nextDraw.jackpot!!.toJackpotText(locale)
+        composeRule.onNodeWithContentDescription(string(R.string.jackpot_description, jackpot.fullAmount))
+            .assertIsDisplayed()
         composeRule.onAllNodesWithContentDescription(string(R.string.jackpot_description, ""), substring = true)
             .assertCountEquals(1)
     }

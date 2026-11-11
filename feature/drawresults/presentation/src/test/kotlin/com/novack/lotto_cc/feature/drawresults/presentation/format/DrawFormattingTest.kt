@@ -30,21 +30,21 @@ class DrawFormattingTest {
 
     @Test
     fun `jackpot from one million is shown in millions with the locale's decimal separator`() {
-        assertEquals(JackpotText.Millions("6", "€"), euros("6000000.00").toJackpotText(Locale.GERMANY))
-        assertEquals(JackpotText.Millions("53,3", "€"), euros("53300000").toJackpotText(Locale.GERMANY))
-        assertEquals(JackpotText.Millions("53.3", "€"), euros("53300000").toJackpotText(Locale.US))
-        assertEquals(JackpotText.Millions("1", "€"), euros("1000000").toJackpotText(Locale.GERMANY))
+        assertEquals(JackpotText("6.000.000\u00A0€", "6"), euros("6000000.00").toJackpotText(Locale.GERMANY))
+        assertEquals(JackpotText("53.300.000\u00A0€", "53,3"), euros("53300000").toJackpotText(Locale.GERMANY))
+        assertEquals(JackpotText("€53,300,000", "53.3"), euros("53300000").toJackpotText(Locale.US))
+        assertEquals("1", euros("1000000").toJackpotText(Locale.GERMANY).millions)
     }
 
     @Test
-    fun `jackpot below one million is shown in full`() {
-        assertEquals(JackpotText.Exact("500.000 €"), euros("500000").toJackpotText(Locale.GERMANY))
-        assertEquals(JackpotText.Exact("€50,000"), euros("50000").toJackpotText(Locale.US))
+    fun `jackpot below one million has no millions, only the full amount`() {
+        assertEquals(JackpotText("500.000\u00A0€", millions = null), euros("500000").toJackpotText(Locale.GERMANY))
+        assertEquals(JackpotText("€50,000", millions = null), euros("50000").toJackpotText(Locale.US))
     }
 
     @Test
     fun `jackpot is rounded down, never overstated`() {
-        assertEquals(JackpotText.Millions("9,9", "€"), euros("9999999").toJackpotText(Locale.GERMANY))
-        assertEquals(JackpotText.Exact("999.999 €"), euros("999999.99").toJackpotText(Locale.GERMANY))
+        assertEquals(JackpotText("9.999.999\u00A0€", "9,9"), euros("9999999.99").toJackpotText(Locale.GERMANY))
+        assertEquals(JackpotText("999.999\u00A0€", millions = null), euros("999999.99").toJackpotText(Locale.GERMANY))
     }
 }

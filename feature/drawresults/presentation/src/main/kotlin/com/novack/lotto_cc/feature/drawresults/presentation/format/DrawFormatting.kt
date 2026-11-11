@@ -21,30 +21,29 @@ internal fun Instant.toDrawDateText(zone: ZoneId, locale: Locale): String {
     return DateTimeFormatter.ofPattern("EEE, $datePattern", locale).format(atZone(zone))
 }
 
-/** A jackpot ready to display. Amounts are rounded down, so a jackpot is never overstated. */
-internal sealed interface JackpotText {
-    /** One million or more, for a localized template such as "%1$s Mio. %2$s" or "%2$s%1$s million". */
-    data class Millions(val millions: String, val currencySymbol: String) : JackpotText
-
-    /** Below one million: the full localized amount, e.g. "500.000 €". */
-    data class Exact(val amount: String) : JackpotText
-}
+/**
+ * A jackpot ready to display. Amounts are rounded down, so a jackpot is never overstated.
+ *
+ * @param fullAmount the whole amount with currency, e.g. "€80,000,000" or "80.000.000 €"; read by
+ *   screen readers, and shown when the jackpot is below a million.
+ * @param millions the amount in millions for the strip, e.g. "53,3"; null below one million.
+ */
+internal data class JackpotText(val fullAmount: String, val millions: String?)
 
 private val OneMillion = BigDecimal(1_000_000)
 
 internal fun Money.toJackpotText(locale: Locale): JackpotText {
-    val currency = Currency.getInstance(currencyCode)
-    if (amount < OneMillion) {
-        val format = NumberFormat.getCurrencyInstance(locale).apply {
-            this.currency = currency
-            maximumFractionDigits = 0
-            roundingMode = RoundingMode.DOWN
-        }
-        return JackpotText.Exact(format.format(amount))
+    val currencyFormat = NumberFormat.getCurrencyInstance(locale).apply {
+        currency = Currency.getInstance(currencyCode)
+        maximumFractionDigits = 0
+        roundingMode = RoundingMode.DOWN
     }
-    val format = NumberFormat.getNumberInstance(locale).apply {
+    val millionsFormat = NumberFormat.getNumberInstance(locale).apply {
         maximumFractionDigits = 1
         roundingMode = RoundingMode.DOWN
     }
-    return JackpotText.Millions(format.format(amount.movePointLeft(6)), currency.getSymbol(locale))
+    return JackpotText(
+        fullAmount = currencyFormat.format(amount),
+        millions = if (amount < OneMillion) null else millionsFormat.format(amount.movePointLeft(6)),
+    )
 }
