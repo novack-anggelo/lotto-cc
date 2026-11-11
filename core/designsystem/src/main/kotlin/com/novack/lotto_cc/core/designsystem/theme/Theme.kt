@@ -1,4 +1,4 @@
-package com.novack.lotto_cc.ui.theme
+package com.novack.lotto_cc.core.designsystem.theme
 
 import android.app.Activity
 import android.os.Build
@@ -34,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun LottoccTheme(
+fun LottoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

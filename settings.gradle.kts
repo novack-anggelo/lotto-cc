@@ -25,4 +25,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "lotto-cc"
 include(":app")
+include(":core:common")
 include(":core:network")
+include(":core:designsystem")
+include(":core:testing")
+include(":feature:drawresults:domain")
+include(":feature:drawresults:data")
+include(":feature:drawresults:presentation")

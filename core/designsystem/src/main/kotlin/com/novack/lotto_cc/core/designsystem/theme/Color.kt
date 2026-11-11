@@ -1,4 +1,4 @@
-package com.novack.lotto_cc.ui.theme
+package com.novack.lotto_cc.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
