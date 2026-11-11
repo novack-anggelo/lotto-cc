@@ -50,7 +50,8 @@ fun DrawnNumbers(
         itemVerticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(MetalBrushes.Silver, RoundedCornerShape(RowCornerRadius))
-            .padding(Spacing.xxs),
+            // Main balls end up Spacing.xs from the edge on every side (vertically via centring).
+            .padding(horizontal = Spacing.xs, vertical = Spacing.xxs),
     ) {
         numbers.forEach { LotteryBall(number = it) }
         if (bonusNumbers.isNotEmpty()) {
@@ -59,8 +60,11 @@ fun DrawnNumbers(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .testTag(BonusNumbersTestTag)
-                    .drawBehind { drawBonusBackground(bleed = Spacing.xxs.toPx()) }
-                    .padding(Spacing.xxs),
+                    .drawBehind {
+                        drawBonusBackground(horizontalBleed = Spacing.xs.toPx(), verticalBleed = Spacing.xxs.toPx())
+                    }
+                    // With the bleed, bonus balls end up Spacing.xs from the dark edge on every side.
+                    .padding(start = Spacing.xs, top = Spacing.xxs, bottom = Spacing.xxs),
             ) {
                 bonusNumbers.forEach {
                     LotteryBall(
@@ -74,13 +78,14 @@ fun DrawnNumbers(
 }
 
 /**
- * The bonus group's background, extended by [bleed] (the row's padding) on the top, bottom and end,
- * so it reaches the row's edges instead of being inset like the main balls.
+ * The bonus group's background, extended by the row's padding ([horizontalBleed] on the end,
+ * [verticalBleed] on the top and bottom), so it reaches the row's edges instead of being inset like
+ * the main balls.
  */
-private fun DrawScope.drawBonusBackground(bleed: Float) {
-    val left = if (layoutDirection == LayoutDirection.Ltr) 0f else -bleed
-    val backgroundSize = Size(size.width + bleed, size.height + 2 * bleed)
-    translate(left = left, top = -bleed) {
+private fun DrawScope.drawBonusBackground(horizontalBleed: Float, verticalBleed: Float) {
+    val left = if (layoutDirection == LayoutDirection.Ltr) 0f else -horizontalBleed
+    val backgroundSize = Size(size.width + horizontalBleed, size.height + 2 * verticalBleed)
+    translate(left = left, top = -verticalBleed) {
         val outline = RoundedCornerShape(RowCornerRadius).createOutline(backgroundSize, layoutDirection, this)
         drawOutline(outline, MetalBrushes.Gunmetal)
     }
