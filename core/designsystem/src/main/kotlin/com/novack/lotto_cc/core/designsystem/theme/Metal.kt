@@ -1,8 +1,15 @@
 package com.novack.lotto_cc.core.designsystem.theme
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.LinearGradientShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 
 /**
  * Static metallic sheens: alternating light and dark bands across the element's diagonal, like
@@ -31,18 +38,25 @@ internal object MetalBrushes {
 }
 
 /**
- * A vertical brushed-metal sheen in [base]'s tone: light and dark bands from the top, ending in
- * plain [base] over the bottom fifth, so text placed there keeps [base]'s contrast.
+ * A slanted brushed-metal sheen in [base]'s tone, like the numbers row, repeating along the element
+ * so tall shapes get stripes too. The stripes only move away from [content] (lighter behind dark
+ * text, darker behind light text), so text keeps at least the contrast it has on plain [base].
  */
-internal fun verticalMetalSheen(base: Color): Brush {
-    fun lighter(fraction: Float) = lerp(base, Color.White, fraction)
-    fun darker(fraction: Float) = lerp(base, Color.Black, fraction)
-    return Brush.verticalGradient(
-        0.00f to lighter(0.30f),
-        0.18f to base,
-        0.36f to darker(0.15f),
-        0.56f to lighter(0.20f),
-        0.80f to base,
-        1.00f to base,
+internal fun slantedMetalSheen(base: Color, content: Color): Brush {
+    val towards = if (content.luminance() < base.luminance()) Color.White else Color.Black
+    fun shade(fraction: Float) = lerp(base, towards, fraction)
+    return SlantedStripes(
+        listOf(0.00f to base, 0.30f to shade(0.30f), 0.50f to base, 0.75f to shade(0.15f), 1.00f to base),
+    )
+}
+
+/** A gradient across the element's width, tilted downwards and mirrored to fill any height. */
+private class SlantedStripes(private val stops: List<Pair<Float, Color>>) : ShaderBrush() {
+    override fun createShader(size: Size): Shader = LinearGradientShader(
+        from = Offset.Zero,
+        to = Offset(size.width * 1.5f, size.width * 0.75f),
+        colors = stops.map { it.second },
+        colorStops = stops.map { it.first },
+        tileMode = TileMode.Mirror,
     )
 }
