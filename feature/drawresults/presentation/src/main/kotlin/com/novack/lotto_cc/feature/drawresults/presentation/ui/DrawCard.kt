@@ -5,11 +5,8 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
@@ -20,8 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
@@ -30,9 +31,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -72,25 +76,37 @@ internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = CardElevation),
         modifier = modifier.fillMaxWidth(),
     ) {
-        Row(Modifier.height(IntrinsicSize.Min)) {
-            // Grows with the font, capped so the numbers keep their room; same width on every card.
-            val stripWidth = JackpotStripWidth * LocalDensity.current.fontScale.coerceAtMost(MaxStripFontScale)
-            JackpotStrip(card.jackpot, colors, Modifier.width(stripWidth).fillMaxHeight())
+        // Grows with the font, capped so the numbers keep their room; same width on every card.
+        val stripWidth = JackpotStripWidth * LocalDensity.current.fontScale.coerceAtMost(MaxStripFontScale)
+        // The strip is drawn behind the row at the row's measured height (no intrinsic sizing, which
+        // underestimates wrapped FlowRows and clipped the card at large font sizes).
+        Row(Modifier.drawBehind { drawStrip(colors.accentSheen, stripWidth.toPx()) }) {
+            JackpotStrip(card.jackpot, colors.onAccent, Modifier.width(stripWidth).align(Alignment.Bottom))
             Column(
                 verticalArrangement = Arrangement.spacedBy(Spacing.s),
                 modifier = Modifier.weight(1f).padding(Spacing.m),
             ) {
-                Column {
-                    Text(
-                        text = stringResource(card.lottery.nameRes),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = rememberDrawDate(card.lastDrawTime),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                // Spiel 77 / SUPER 6 sit next to the title, and wrap under it when there's no room.
+                FlowRow(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column {
+                        Text(
+                            text = stringResource(card.lottery.nameRes),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = rememberDrawDate(card.lastDrawTime),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        card.spiel77?.let { SupplementaryNumber(stringResource(R.string.spiel77), it) }
+                        card.super6?.let { SupplementaryNumber(stringResource(R.string.super6), it) }
+                    }
                 }
                 DrawnNumbers(
                     numbers = card.numbers,
@@ -103,13 +119,37 @@ internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
     }
 }
 
-/** The lottery's accent colour as a metal sheen, with the next jackpot at the bottom when it is known. */
+/** "Spiel 77: 7312244": grey label, bold number, like the mockup. */
 @Composable
-private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modifier = Modifier) {
+private fun SupplementaryNumber(label: String, number: String) {
+    Text(
+        text = buildAnnotatedString {
+            append("$label: ")
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)) {
+                append(number)
+            }
+        },
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+/** The strip at the start edge, full height. Drawn in an inset so the brush is sized to the strip. */
+private fun DrawScope.drawStrip(brush: Brush, width: Float) {
+    val rest = size.width - width
+    if (layoutDirection == LayoutDirection.Ltr) {
+        inset(left = 0f, top = 0f, right = rest, bottom = 0f) { drawRect(brush) }
+    } else {
+        inset(left = rest, top = 0f, right = 0f, bottom = 0f) { drawRect(brush) }
+    }
+}
+
+/** The next jackpot, shown at the bottom of the strip when it is known. */
+@Composable
+private fun JackpotStrip(jackpot: Money?, contentColor: Color, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.background(colors.accentSheen).padding(Spacing.xs),
+        modifier = modifier.padding(Spacing.xs),
     ) {
         if (jackpot == null) return@Column
         val text = rememberJackpotText(jackpot)
@@ -119,10 +159,10 @@ private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modif
             modifier = Modifier.clearAndSetSemantics { contentDescription = description },
         ) {
             if (text.millions == null) {
-                JackpotLine(text.fullAmount, colors.onAccent, MaterialTheme.typography.labelMedium)
+                JackpotLine(text.fullAmount, contentColor, MaterialTheme.typography.labelMedium)
             } else {
-                JackpotLine(text.millions, colors.onAccent, MaterialTheme.typography.headlineSmall)
-                JackpotLine(stringResource(R.string.jackpot_unit_millions), colors.onAccent, MaterialTheme.typography.titleSmall)
+                JackpotLine(text.millions, contentColor, MaterialTheme.typography.headlineSmall)
+                JackpotLine(stringResource(R.string.jackpot_unit_millions), contentColor, MaterialTheme.typography.titleSmall)
             }
         }
     }
