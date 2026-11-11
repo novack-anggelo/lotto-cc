@@ -1,6 +1,9 @@
 package com.novack.lotto_cc.feature.drawresults.presentation.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -105,6 +108,25 @@ class DrawResultsScreenTest {
 
         composeRule.onAllNodesWithText(string(R.string.spiel77), substring = true).assertCountEquals(0)
         composeRule.onAllNodesWithText(string(R.string.super6), substring = true).assertCountEquals(0)
+    }
+
+    @Test
+    fun tappingACard_opensTheLotto24Website() {
+        val openedUris = mutableListOf<String>()
+        val uriHandler = object : UriHandler {
+            override fun openUri(uri: String) {
+                openedUris += uri
+            }
+        }
+        composeRule.setContent {
+            CompositionLocalProvider(LocalUriHandler provides uriHandler) {
+                LottoTheme { DrawResultsScreen(DrawResultsUiState.Content(listOf(eurojackpot.toUiModel())), onRetry = {}) }
+            }
+        }
+
+        composeRule.onNodeWithText(string(R.string.lottery_eurojackpot)).performClick()
+
+        assertEquals(listOf(Lotto24Url), openedUris)
     }
 
     @Test
