@@ -105,18 +105,16 @@ class DrawResultsScreenTest {
         val withNumbers = DrawFixtures.lotto6aus49(spiel77 = "0312244", super6 = "112430")
         setContent(DrawResultsUiState.Content(listOf(withNumbers.toUiModel(), eurojackpot.toUiModel())))
 
-        composeRule.onNodeWithText("${string(R.string.spiel77)}: 0312244").assertIsDisplayed()
-        composeRule.onNodeWithText("${string(R.string.super6)}: 112430").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("${string(R.string.spiel77)}: 0 3 1 2 2 4 4").assertIsDisplayed()
-        composeRule.onAllNodesWithText(string(R.string.spiel77), substring = true).assertCountEquals(1)
+        composeRule.onNodeWithContentDescription("${string(R.string.super6)}: 1 1 2 4 3 0").assertIsDisplayed()
     }
 
     @Test
     fun spiel77AndSuper6_areHiddenWhenUnknown() {
         showContent()
 
-        composeRule.onAllNodesWithText(string(R.string.spiel77), substring = true).assertCountEquals(0)
-        composeRule.onAllNodesWithText(string(R.string.super6), substring = true).assertCountEquals(0)
+        composeRule.onAllNodesWithContentDescription(string(R.string.spiel77), substring = true).assertCountEquals(0)
+        composeRule.onAllNodesWithContentDescription(string(R.string.super6), substring = true).assertCountEquals(0)
     }
 
     @Test

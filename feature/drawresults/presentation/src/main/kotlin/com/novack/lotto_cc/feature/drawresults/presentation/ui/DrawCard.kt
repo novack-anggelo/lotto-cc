@@ -1,14 +1,16 @@
 package com.novack.lotto_cc.feature.drawresults.presentation.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -21,23 +23,19 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -105,7 +103,8 @@ internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modi
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    Column(horizontalAlignment = Alignment.End) {
+                    // As wide as the widest line, so labels and numbers line up in two columns.
+                    Column(Modifier.width(IntrinsicSize.Max)) {
                         card.spiel77?.let { SupplementaryNumber(stringResource(R.string.spiel77), it) }
                         card.super6?.let { SupplementaryNumber(stringResource(R.string.super6), it) }
                     }
@@ -121,21 +120,22 @@ internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modi
     }
 }
 
-/** "Spiel 77: 7312244": grey label, bold number, like the mockup. Read digit by digit. */
+/** "Spiel77:   7312244": grey label on the left, bold number on the right, like the mockup. Read digit by digit. */
 @Composable
 private fun SupplementaryNumber(label: String, number: String) {
     val description = "$label: ${number.toList().joinToString(" ")}"
-    Text(
-        modifier = Modifier.semantics { contentDescription = description },
-        text = buildAnnotatedString {
-            append("$label: ")
-            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                append(number)
-            }
-        },
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = description },
+    ) {
+        Text(
+            text = "$label:",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.weight(1f))
+        Text(text = number, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+    }
 }
 
 /** The strip at the start edge, full height. Drawn in an inset so the brush is sized to the strip. */
