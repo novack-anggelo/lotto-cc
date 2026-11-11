@@ -49,8 +49,17 @@ class DrawResultsScreenTest {
         nextDraw = NextDraw(Instant.parse("2023-01-24T18:00:00Z"), jackpot = null),
     )
 
+    private val openedUris = mutableListOf<String>()
+    private val uriHandler = object : UriHandler {
+        override fun openUri(uri: String) {
+            openedUris += uri
+        }
+    }
+
     private fun setContent(uiState: DrawResultsUiState, onRetry: () -> Unit = {}) = composeRule.setContent {
-        LottoTheme { DrawResultsScreen(uiState, onRetry) }
+        CompositionLocalProvider(LocalUriHandler provides uriHandler) {
+            LottoTheme { DrawResultsScreen(uiState, onRetry) }
+        }
     }
 
     private fun showContent() =
@@ -111,22 +120,13 @@ class DrawResultsScreenTest {
     }
 
     @Test
-    fun tappingACard_opensTheLotto24Website() {
-        val openedUris = mutableListOf<String>()
-        val uriHandler = object : UriHandler {
-            override fun openUri(uri: String) {
-                openedUris += uri
-            }
-        }
-        composeRule.setContent {
-            CompositionLocalProvider(LocalUriHandler provides uriHandler) {
-                LottoTheme { DrawResultsScreen(DrawResultsUiState.Content(listOf(eurojackpot.toUiModel())), onRetry = {}) }
-            }
-        }
+    fun tappingEitherCard_opensTheLotto24Website() {
+        showContent()
 
+        composeRule.onNodeWithText(string(R.string.lottery_lotto6aus49)).performClick()
         composeRule.onNodeWithText(string(R.string.lottery_eurojackpot)).performClick()
 
-        assertEquals(listOf(Lotto24Url), openedUris)
+        assertEquals(listOf(Lotto24Url, Lotto24Url), openedUris)
     }
 
     @Test
