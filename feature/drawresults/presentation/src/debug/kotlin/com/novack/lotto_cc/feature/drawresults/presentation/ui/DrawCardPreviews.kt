@@ -4,24 +4,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
+import com.novack.lotto_cc.feature.drawresults.presentation.model.DrawCardUiModel
+
+/** Both lotteries, and a card whose next jackpot is unknown. */
+internal class DrawCardProvider : CollectionPreviewParameterProvider<DrawCardUiModel>(
+    listOf(PreviewData.lotto6aus49, PreviewData.eurojackpot, PreviewData.eurojackpot.copy(jackpot = null)),
+)
 
 @Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
 @Preview(showBackground = true, backgroundColor = 0xFFF7F7F7, locale = "de")
 @Composable
-private fun DrawCardLotto6aus49Preview() {
-    LottoTheme { DrawCard(PreviewData.lotto6aus49, Modifier.padding(16.dp)) }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
-@Composable
-private fun DrawCardEurojackpotPreview() {
-    LottoTheme { DrawCard(PreviewData.eurojackpot, Modifier.padding(16.dp)) }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
-@Composable
-private fun DrawCardWithoutJackpotPreview() {
-    LottoTheme { DrawCard(PreviewData.eurojackpot.copy(jackpot = null), Modifier.padding(16.dp)) }
+private fun DrawCardPreview(@PreviewParameter(DrawCardProvider::class) card: DrawCardUiModel) {
+    LottoTheme { DrawCard(card, Modifier.padding(16.dp)) }
 }
