@@ -7,18 +7,24 @@ import com.novack.lotto_cc.feature.drawresults.presentation.model.ErrorReason
 import com.novack.lotto_cc.feature.drawresults.presentation.model.Lottery
 
 internal fun LotteryDraw.toUiModel(): DrawCardUiModel = when (this) {
-    is LotteryDraw.Lotto6aus49 ->
-        toCard(Lottery.Lotto6aus49, bonusNumbers = listOf(superNumber)).copy(spiel77 = spiel77, super6 = super6)
+    is LotteryDraw.Lotto6aus49 -> toCard(Lottery.Lotto6aus49, listOf(superNumber), spiel77, super6)
     is LotteryDraw.Eurojackpot -> toCard(Lottery.Eurojackpot, bonusNumbers = euroNumbers)
 }
 
-private fun LotteryDraw.toCard(lottery: Lottery, bonusNumbers: List<Int>) = DrawCardUiModel(
+private fun LotteryDraw.toCard(
+    lottery: Lottery,
+    bonusNumbers: List<Int>,
+    spiel77: String? = null,
+    super6: String? = null,
+) = DrawCardUiModel(
     lottery = lottery,
     lastDrawTime = lastDrawTime,
     numbers = numbers,
     bonusNumbers = bonusNumbers,
     nextDrawTime = nextDraw.time,
     jackpot = nextDraw.jackpot,
+    spiel77 = spiel77,
+    super6 = super6,
 )
 
 internal fun DomainError.toErrorReason(): ErrorReason = when (this) {
