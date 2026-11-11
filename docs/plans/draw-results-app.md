@@ -124,7 +124,8 @@ snackbar. Jackpot shown abbreviated in the card's accent strip ("4 Mio" / "53 Mi
 | 10 | `feature/draw_results/screen` | Compose screen: cards, jackpot strip, next-draw badge, loading/error; EN+DE strings | Instrumented Compose UI tests |
 | 10b | `feature/design_system/spacing` | `Spacing` scale in `:core:designsystem`; dp literals replaced by spacing steps and named component sizes (PR 10 review) | Existing UI tests; visual check |
 | 11 | `feature/draw_results/app_wiring` | `Application` + startKoin, `MainActivity` hosts screen, template theme removed | App runs on emulator (screenshot in PR) |
-| 12 | `feature/additional_lotteries/spiel77_super6` | Vertical slice: request + map + render Spiel 77 / SUPER 6 on 6aus49 card | Mapper/VM unit tests + UI test |
+| 12a | `feature/additional_lotteries/data` | Spiel 77 / SUPER 6: domain fields on the 6aus49 draw, request all four lotteries, attach numbers drawn with the 6aus49 draw | DTO + mapper + repository unit tests |
+| 12b | `feature/additional_lotteries/ui` | Render Spiel 77 / SUPER 6 on the 6aus49 card (as in the mockup) | UI model mapper unit tests + UI test |
 | 13 | `feature/pull_to_refresh/refresh` | `PullToRefreshBox`, VM refresh state, snackbar on failure | VM unit tests + UI test |
 | 14 | `feature/website_link/open_link` | Tap card → open https://www.lotto24.de | UI test (intent / UriHandler fake) |
 | 15 | `feature/project_setup/docs` | README: architecture, module graph, how to build/test, decisions | Review |
