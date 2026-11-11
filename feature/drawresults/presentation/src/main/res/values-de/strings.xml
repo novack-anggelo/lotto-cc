@@ -1,8 +1,8 @@
 <resources>
     <string name="bonus_superzahl">Superzahl</string>
     <string name="bonus_eurozahl">Eurozahl</string>
+    <string name="jackpot_unit_millions">MIO</string>
     <string name="next_draw">Nächste Ziehung:</string>
-    <string name="jackpot_millions">%1$s\nMio. %2$s</string>
     <string name="error_no_connection">Keine Internetverbindung. Prüfe deine Verbindung und versuche es erneut.</string>
     <string name="error_server">Die Ziehungsergebnisse sind gerade nicht verfügbar. Bitte versuche es später erneut.</string>
     <string name="error_unknown">Etwas ist schiefgelaufen. Bitte versuche es erneut.</string>
