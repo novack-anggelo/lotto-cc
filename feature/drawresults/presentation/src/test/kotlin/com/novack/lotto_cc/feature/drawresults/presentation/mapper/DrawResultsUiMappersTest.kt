@@ -42,6 +42,17 @@ class DrawResultsUiMappersTest {
     }
 
     @Test
+    fun `lotto 6aus49 carries Spiel 77 and SUPER 6, Eurojackpot has none`() {
+        val lotto = DrawFixtures.lotto6aus49(spiel77 = "0312244", super6 = "112430").toUiModel()
+        val eurojackpot = DrawFixtures.eurojackpot().toUiModel()
+
+        assertEquals("0312244", lotto.spiel77)
+        assertEquals("112430", lotto.super6)
+        assertNull(eurojackpot.spiel77)
+        assertNull(eurojackpot.super6)
+    }
+
+    @Test
     fun `unknown jackpot stays null`() {
         val draw = DrawFixtures.eurojackpot(nextDraw = NextDraw(Instant.parse("2023-01-24T18:00:00Z"), jackpot = null))
 
