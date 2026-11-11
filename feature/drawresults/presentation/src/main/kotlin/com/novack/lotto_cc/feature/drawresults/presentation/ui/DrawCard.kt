@@ -1,7 +1,6 @@
 package com.novack.lotto_cc.feature.drawresults.presentation.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -117,9 +116,12 @@ private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modif
 /** One bold line of the strip; long values ("53,3") shrink to fit instead of wrapping. */
 @Composable
 private fun JackpotLine(text: String, color: Color, style: TextStyle) {
-    BasicText(
+    Text(
         text = text,
-        style = style.copy(color = color, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
+        color = color,
+        style = style,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
         maxLines = 1,
         autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = style.fontSize),
     )
