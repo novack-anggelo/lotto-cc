@@ -95,6 +95,7 @@ class DrawResultsScreenTest {
 
         composeRule.onNodeWithText("${string(R.string.spiel77)}: 0312244").assertIsDisplayed()
         composeRule.onNodeWithText("${string(R.string.super6)}: 112430").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("${string(R.string.spiel77)}: 0 3 1 2 2 4 4").assertIsDisplayed()
         composeRule.onAllNodesWithText(string(R.string.spiel77), substring = true).assertCountEquals(1)
     }
 

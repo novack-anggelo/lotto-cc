@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -119,10 +120,12 @@ internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
     }
 }
 
-/** "Spiel 77: 7312244": grey label, bold number, like the mockup. */
+/** "Spiel 77: 7312244": grey label, bold number, like the mockup. Read digit by digit. */
 @Composable
 private fun SupplementaryNumber(label: String, number: String) {
+    val description = "$label: ${number.toList().joinToString(" ")}"
     Text(
+        modifier = Modifier.semantics { contentDescription = description },
         text = buildAnnotatedString {
             append("$label: ")
             withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)) {
