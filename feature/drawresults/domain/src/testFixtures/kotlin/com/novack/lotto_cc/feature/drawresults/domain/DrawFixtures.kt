@@ -20,7 +20,9 @@ object DrawFixtures {
             time = Instant.parse("2023-01-25T17:25:00Z"),
             jackpot = euros("6000000.00"),
         ),
-    ) = LotteryDraw.Lotto6aus49(lastDrawTime, numbers, superNumber, nextDraw)
+        spiel77: String? = null,
+        super6: String? = null,
+    ) = LotteryDraw.Lotto6aus49(lastDrawTime, numbers, superNumber, nextDraw, spiel77, super6)
 
     fun eurojackpot(
         lastDrawTime: Instant = Instant.parse("2023-01-20T18:00:00Z"),
