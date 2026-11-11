@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.BallColors
+import com.novack.lotto_cc.core.designsystem.theme.Spacing
 
 private val MinBallSize = 32.dp
 
@@ -38,7 +39,7 @@ fun LotteryBall(
             }
             .circle(MinBallSize)
             .background(BallColors.RegularBackground, CircleShape)
-            .padding(4.dp),
+            .padding(Spacing.xs),
     ) {
         Text(
             text = number.toString(),

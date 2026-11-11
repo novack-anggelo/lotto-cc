@@ -12,6 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.theme.MetalBrushes
+import com.novack.lotto_cc.core.designsystem.theme.Spacing
+
+/**
+ * Half the height of a one-line row, so it reads as a pill; a fixed radius (not 50%) keeps a wrapped,
+ * multi-line row a rounded rectangle instead of a stadium that cuts into the corner balls.
+ */
+private val RowCornerRadius = 20.dp
 
 /** Tags the bonus-number group, so UI tests can tell bonus balls from main ones. */
 internal const val BonusNumbersTestTag = "DrawnNumbers.bonus"
@@ -32,22 +39,22 @@ fun DrawnNumbers(
     bonusLabel: String? = null,
 ) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
         itemVerticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .background(MetalBrushes.Silver, RoundedCornerShape(20.dp))
-            .padding(2.dp),
+            .background(MetalBrushes.Silver, RoundedCornerShape(RowCornerRadius))
+            .padding(Spacing.xxs),
     ) {
         numbers.forEach { LotteryBall(number = it) }
         if (bonusNumbers.isNotEmpty()) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .testTag(BonusNumbersTestTag)
-                    .background(MetalBrushes.Gunmetal, RoundedCornerShape(20.dp))
-                    .padding(2.dp),
+                    .background(MetalBrushes.Gunmetal, RoundedCornerShape(percent = 50))
+                    .padding(Spacing.xxs),
             ) {
                 bonusNumbers.forEach {
                     LotteryBall(
