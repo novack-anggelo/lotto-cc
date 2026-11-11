@@ -4,8 +4,8 @@
     <string name="bonus_superzahl">Super number</string>
     <string name="bonus_eurozahl">Euro number</string>
     <string name="jackpot_unit_millions">MILL</string>
-    <string name="spiel77" translatable="false">Spiel 77</string>
-    <string name="super6" translatable="false">SUPER 6</string>
+    <string name="spiel77" translatable="false">Spiel77</string>
+    <string name="super6" translatable="false">SUPER6</string>
     <string name="next_draw">Next draw:</string>
     <!-- %1$s: full jackpot with currency. Same in German. -->
     <string name="jackpot_description" translatable="false">Jackpot: %1$s</string>
