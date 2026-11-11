@@ -30,10 +30,10 @@ data class LotteryColors(
         )
 
         val Eurojackpot = LotteryColors(
-            accent = Color(0xFF866418),
-            onAccent = Color(0xFFFFF3C4), // 4.9:1
-            badge = Color(0xFF2E0F04),
-            onBadge = Color(0xFFF9D24A), // 12.1:1
+            accent = Color(0xFFC9A227),
+            onAccent = Color(0xFF4A3800), // 4.7:1
+            badge = Color(0xFFC9A227),
+            onBadge = Color(0xFF4A3800),
         )
     }
 }

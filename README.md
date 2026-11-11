@@ -187,9 +187,10 @@ In the clarification rounds I fixed the scope and shape of the product:
 | Proposed a metallic finish for the ball row | Brushed silver with a gunmetal bonus group gives the balls a physical, lottery-machine feel. It's static, so it costs nothing at runtime. | #8 |
 | Gave the card a paper surface, elevation and its own previews | A warm, tactile card that reads like a printed ticket, with paper-toned surface colours across the whole theme. | #10 |
 | Explored the metal finish on the jackpot strip, iterating from a vertical sheen to slanted stripes that echo the ball row | One coherent visual language across the card. The stripes only shade away from the text colour, so the jackpot stays readable. | #10 |
-| Tuned the Eurojackpot tone | A lighter bronze that still meets WCAG AA contrast (4.9:1). | #10 |
+| Tuned the Eurojackpot tone, iterating from bronze to a classic gold with warm dark-gold text | A real gold that reads clearly next to LOTTO's yellow, at WCAG AA contrast (4.7:1). The gold badge also stands out in dark mode. | #10, `dev` |
 | Made the jackpot the headline: a large number with "MILL" / "MIO", like the mockup | The most important figure is readable at a glance, and screen readers still get the full amount with currency. | #10 |
 | Final polish of the Spiel 77 / SUPER 6 labels and number colour, directly on `dev` | A closer match to the mockup. | `1abadaf` |
+| Refined the next-draw badge: flush with the card's corner, a rounded top corner and the same metal finish as the strip | The badge reads as part of the card and matches its metallic look. | `5290a35`, `abaf60b` |
 
 ### Scope and prioritisation
 - **Spacing refactor:** split into its own PR (PR #11), so PR #10 stayed reviewable.
@@ -206,7 +207,6 @@ baseline.
 ## Known limitations
 - **Pull-to-refresh** is planned but deferred (goal 13 in the plan).
 - **Home-screen widget:** out of scope.
-- **Dark mode:** the dark-brown Eurojackpot date badge stands out little from the dark card.
 - **TalkBack:** it doesn't announce that tapping a card opens a website.
 - **Time zone:** if it changes while the screen is open, dates update only after the screen is
   recreated.
