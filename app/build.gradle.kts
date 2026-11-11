@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.lotto.android.application)
+    alias(libs.plugins.lotto.koin)
 }
 
 android {
@@ -15,7 +16,6 @@ android {
         release {
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
             }
         }
     }
@@ -23,7 +23,11 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:network"))
+    implementation(project(":feature:drawresults:data"))
+    implementation(project(":feature:drawresults:presentation"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.koin.android)
 }
