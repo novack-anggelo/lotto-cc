@@ -48,7 +48,7 @@ class DrawResultsRepositoryImplTest {
         val result = repository.getDrawResults()
 
         assertEquals(DomainResult.Success(listOf(DrawFixtures.lotto6aus49(), DrawFixtures.eurojackpot())), result)
-        assertEquals("/public/v1/drawinfo/aggregated/6aus49,eurojackpot", server.takeRequest().url.encodedPath)
+        assertEquals("/public/v1/drawinfo/aggregated/6aus49,eurojackpot,spiel77,super6", server.takeRequest().url.encodedPath)
         assertEquals(1, server.requestCount)
         assertTrue(logger.entries.isEmpty())
     }

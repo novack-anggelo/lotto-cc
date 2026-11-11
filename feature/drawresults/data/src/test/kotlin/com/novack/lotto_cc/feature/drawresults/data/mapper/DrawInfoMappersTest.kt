@@ -100,6 +100,53 @@ class DrawInfoMappersTest {
         ).forEach { assertNull(it.toDomainOrNull(), "expected no jackpot for $it") }
     }
 
+    @Test
+    fun `attaches Spiel 77 and SUPER 6 to the 6aus49 draw they were drawn with`() {
+        val dtos = listOf(lottoDto(), eurojackpotDto(), supplementaryDto("spiel77", "0312244"), supplementaryDto("super6", "112430"))
+
+        assertEquals(
+            listOf(DrawFixtures.lotto6aus49(spiel77 = "0312244", super6 = "112430"), DrawFixtures.eurojackpot()),
+            dtos.toDomain(),
+        )
+    }
+
+    @Test
+    fun `ignores Spiel 77 and SUPER 6 from another draw`() {
+        val dtos = listOf(
+            lottoDto(),
+            supplementaryDto("spiel77", "7312244", drawDateUtc = "2023-01-18T17:25:00Z"),
+            supplementaryDto("super6", "112430", drawDateUtc = "2023-01-18T17:25:00Z"),
+        )
+
+        assertEquals(listOf(DrawFixtures.lotto6aus49()), dtos.toDomain())
+    }
+
+    @Test
+    fun `ignores malformed Spiel 77 and SUPER 6 numbers`() {
+        listOf(
+            supplementaryDto("spiel77", "731224"),
+            supplementaryDto("spiel77", "73122440"),
+            supplementaryDto("spiel77", "73x2244"),
+            supplementaryDto("super6", "1124300"),
+            supplementaryDto("super6", null),
+            supplementaryDto("super6", "112430", drawDateUtc = null),
+        ).forEach { malformed ->
+            assertEquals(listOf(DrawFixtures.lotto6aus49()), listOf(lottoDto(), malformed).toDomain(), "for $malformed")
+        }
+    }
+
+    @Test
+    fun `Spiel 77 and SUPER 6 without a 6aus49 draw are not shown`() {
+        assertEquals(emptyList(), listOf(supplementaryDto("spiel77", "7312244"), supplementaryDto("super6", "112430")).toDomain())
+    }
+
+    private fun supplementaryDto(lottery: String, number: String?, drawDateUtc: String? = "2023-01-21T18:25:00Z") =
+        LotteryDrawInfoDto(
+            lottery = lottery,
+            lastDraw = LastDrawDto(drawDateUtc = drawDateUtc, drawResult = DrawResultDto(number = number)),
+            nextDraw = NextDrawDto(drawDateUtc = "2023-01-25T17:25:00Z"),
+        )
+
     private fun lottoDto() = LotteryDrawInfoDto(
         lottery = "6aus49",
         lastDraw = LastDrawDto(
