@@ -23,6 +23,14 @@ private val LightColors = lightColorScheme(
     onTertiaryContainer = Color(0xFF261900),
     background = Color(0xFFF7F7F7),
     surface = Color.White,
+    // Warm paper neutrals for cards and containers (Material's defaults are lavender).
+    surfaceVariant = Color(0xFFEAE3D9),
+    onSurfaceVariant = Color(0xFF4F4943),
+    surfaceContainerLowest = Color.White,
+    surfaceContainerLow = Color(0xFFFFFCF5),
+    surfaceContainer = Color(0xFFF8F4EC),
+    surfaceContainerHigh = Color(0xFFF2EEE6),
+    surfaceContainerHighest = Color(0xFFECE8E0),
 )
 
 private val DarkColors = darkColorScheme(
@@ -40,6 +48,13 @@ private val DarkColors = darkColorScheme(
     onTertiaryContainer = Color(0xFFFDDFA6),
     background = Color(0xFF121212),
     surface = Color(0xFF1E1E1E),
+    surfaceVariant = Color(0xFF4D4640),
+    onSurfaceVariant = Color(0xFFD1C8BE),
+    surfaceContainerLowest = Color(0xFF0F0F0F),
+    surfaceContainerLow = Color(0xFF1E1C19),
+    surfaceContainer = Color(0xFF23211D),
+    surfaceContainerHigh = Color(0xFF2D2B27),
+    surfaceContainerHighest = Color(0xFF383632),
 )
 
 /**
