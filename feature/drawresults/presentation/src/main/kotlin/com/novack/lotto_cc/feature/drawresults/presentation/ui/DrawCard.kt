@@ -3,6 +3,7 @@ package com.novack.lotto_cc.feature.drawresults.presentation.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,12 +18,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.novack.lotto_cc.core.designsystem.component.DrawnNumbers
 import com.novack.lotto_cc.core.designsystem.theme.LotteryColors
@@ -43,7 +50,9 @@ internal fun DrawCard(card: DrawCardUiModel, modifier: Modifier = Modifier) {
     val colors = card.lottery.colors
     Card(modifier = modifier.fillMaxWidth()) {
         Row(Modifier.height(IntrinsicSize.Min)) {
-            JackpotStrip(card.jackpot, colors, Modifier.width(56.dp).fillMaxHeight())
+            // Grows with the font (up to 1.5x, so the numbers keep their room); same width on every card.
+            val stripWidth = 56.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
+            JackpotStrip(card.jackpot, colors, Modifier.width(stripWidth).fillMaxHeight())
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f).padding(12.dp),
@@ -95,9 +104,11 @@ private fun JackpotStrip(jackpot: Money?, colors: LotteryColors, modifier: Modif
 
 @Composable
 private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = Modifier) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    // Wraps the badge under the label when both don't fit (narrow screens, large font).
+    FlowRow(
+        itemVerticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier,
     ) {
         Text(
@@ -117,13 +128,20 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
     }
 }
 
-/** A badge with a slanted left edge, like the mockup. */
-private val BadgeShape = GenericShape { size, _ ->
-    moveTo(size.height * 0.4f, 0f)
-    lineTo(size.width, 0f)
-    lineTo(size.width, size.height)
-    lineTo(0f, size.height)
-    close()
+/** A badge with a slanted left edge, like the mockup. The slant stays within the badge's start padding. */
+private object BadgeShape : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val slant = with(density) { 8.dp.toPx() }
+        return Outline.Generic(
+            Path().apply {
+                moveTo(slant, 0f)
+                lineTo(size.width, 0f)
+                lineTo(size.width, size.height)
+                lineTo(0f, size.height)
+                close()
+            },
+        )
+    }
 }
 
 @Composable
