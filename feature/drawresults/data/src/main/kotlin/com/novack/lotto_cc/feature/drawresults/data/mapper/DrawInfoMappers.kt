@@ -21,8 +21,8 @@ private const val TOP_PRIZE_CLASS = "WC_1"
  * are not shown on their own: their numbers are attached to the 6aus49 draw they were drawn with.
  */
 internal fun List<LotteryDrawInfoDto>.toDomain(): List<LotteryDraw> {
-    val spiel77 = supplementaryResult(LotteryIds.SPIEL77, digits = 7)
-    val super6 = supplementaryResult(LotteryIds.SUPER6, digits = 6)
+    val spiel77 = supplementaryResult(LotteryIds.SPIEL77)
+    val super6 = supplementaryResult(LotteryIds.SUPER6)
     return mapNotNull { it.toDomainOrNull() }.map { draw ->
         if (draw !is LotteryDraw.Lotto6aus49) return@map draw
         draw.copy(spiel77 = spiel77?.numberFor(draw), super6 = super6?.numberFor(draw))
@@ -69,15 +69,14 @@ private class SupplementaryResult(val drawTime: Instant, val number: String) {
     fun numberFor(draw: LotteryDraw.Lotto6aus49): String? = number.takeIf { drawTime == draw.lastDrawTime }
 }
 
-/** The first valid entry for [lottery]: a string of exactly [digits] digits with a draw time. */
-private fun List<LotteryDrawInfoDto>.supplementaryResult(lottery: String, digits: Int): SupplementaryResult? =
+/** The first entry for [lottery] with both a number and a draw time; shown as the API sends it. */
+private fun List<LotteryDrawInfoDto>.supplementaryResult(lottery: String): SupplementaryResult? =
     asSequence()
         .filter { it.lottery == lottery }
-        .firstNotNullOfOrNull { it.lastDraw?.toSupplementaryResultOrNull(digits) }
+        .firstNotNullOfOrNull { it.lastDraw?.toSupplementaryResultOrNull() }
 
-private fun LastDrawDto.toSupplementaryResultOrNull(digits: Int): SupplementaryResult? {
-    val number = drawResult?.number?.takeIf { it.isString }?.content
-        ?.takeIf { it.length == digits && it.all(Char::isDigit) } ?: return null
+private fun LastDrawDto.toSupplementaryResultOrNull(): SupplementaryResult? {
+    val number = drawResult?.number ?: return null
     val drawTime = drawDateUtc?.toInstantOrNull() ?: return null
     return SupplementaryResult(drawTime, number)
 }

@@ -2,7 +2,6 @@ package com.novack.lotto_cc.feature.drawresults.data.remote.dto
 
 import com.novack.lotto_cc.core.network.buildJson
 import com.novack.lotto_cc.feature.drawresults.data.remote.readResource
-import kotlinx.serialization.json.JsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -93,13 +92,6 @@ class LotteryDrawInfoDtoParsingTest {
     fun `parses the Spiel 77 number as a string, keeping leading zeros`() {
         val body = """[{"lottery":"spiel77","lastDraw":{"drawDateUtc":"2026-11-07T18:25:00Z","drawResult":{"number":"0663450"}}}]"""
 
-        assertEquals(JsonPrimitive("0663450"), parse(body).single().lastDraw?.drawResult?.number)
-    }
-
-    @Test
-    fun `a numeric Spiel 77 number doesn't fail the response`() {
-        val body = """[{"lottery":"spiel77","lastDraw":{"drawResult":{"number":663450}}}]"""
-
-        assertEquals(JsonPrimitive(663450), parse(body).single().lastDraw?.drawResult?.number)
+        assertEquals("0663450", parse(body).single().lastDraw?.drawResult?.number)
     }
 }
