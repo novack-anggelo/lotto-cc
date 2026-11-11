@@ -1,0 +1,182 @@
+[
+  {
+    "lottery": "6aus49",
+    "lastDraw": {
+      "drawIdentifier": "2023-01-21",
+      "lottery": "6aus49",
+      "drawDate": "2023-01-21T19:25:00+01:00",
+      "drawDateUtc": "2023-01-21T18:25:00Z",
+      "drawResult": {
+        "numbers": [
+          4,
+          19,
+          24,
+          43,
+          44,
+          45
+        ],
+        "superNumber": 7
+      },
+      "quotas": {
+        "WC_1": "5029008.30",
+        "WC_2": "769100.10",
+        "WC_3": "13112.50",
+        "WC_4": "5418.60",
+        "WC_5": "169.00",
+        "WC_6": "56.30",
+        "WC_7": "17.30",
+        "WC_8": "11.80",
+        "WC_9": "6.00"
+      },
+      "nonMonetaryQuotas": {},
+      "winners": {
+        "WC_1": 0,
+        "WC_2": 3,
+        "WC_3": 61,
+        "WC_4": 440,
+        "WC_5": 3913,
+        "WC_6": 27821,
+        "WC_7": 77269,
+        "WC_8": 533367,
+        "WC_9": 603493
+      },
+      "totalStake": "44712847.20",
+      "currency": "EUR"
+    },
+    "nextDraw": {
+      "drawIdentifier": "2023-01-25",
+      "lottery": "6aus49",
+      "drawDate": "2023-01-25T18:25:00+01:00",
+      "drawDateUtc": "2023-01-25T17:25:00Z",
+      "timeZone": "Europe/Berlin",
+      "cutofftime": "2023-01-25T17:45:00+01:00",
+      "jackpot": {
+        "drawIdentifier": "2023-01-25",
+        "lottery": "6aus49",
+        "drawDate": "2023-01-25T18:25:00+01:00",
+        "currency": "EUR",
+        "jackpots": {
+          "WC_1": "6000000.00",
+          "WC_2": "1000000.00"
+        },
+        "jackpotSupported": true
+      }
+    },
+    "draws": []
+  },
+  {
+    "lottery": "eurojackpot",
+    "lastDraw": {
+      "drawIdentifier": "2023-01-20",
+      "lottery": "eurojackpot",
+      "drawDate": "2023-01-20T20:00:00+02:00",
+      "drawDateUtc": "2023-01-20T18:00:00Z",
+      "drawResult": {
+        "numbers": [
+          1,
+          12,
+          15,
+          31,
+          47
+        ],
+        "euroNumbers": [
+          9,
+          10
+        ]
+      },
+      "quotas": {
+        "WC_1": "0.00",
+        "WC_2": "906735.60",
+        "WC_3": "263552.60",
+        "WC_4": "8050.40",
+        "WC_5": "356.00",
+        "WC_6": "192.60",
+        "WC_7": "128.80",
+        "WC_8": "29.40",
+        "WC_9": "21.90",
+        "WC_10": "18.10",
+        "WC_11": "14.40",
+        "WC_12": "10.40"
+      },
+      "nonMonetaryQuotas": {},
+      "winners": {
+        "WC_1": 0,
+        "WC_2": 4,
+        "WC_3": 5,
+        "WC_4": 27,
+        "WC_5": 763,
+        "WC_6": 1551,
+        "WC_7": 1687,
+        "WC_8": 23518,
+        "WC_9": 35240,
+        "WC_10": 80763,
+        "WC_11": 126511,
+        "WC_12": 527464
+      },
+      "totalStake": "54340762.00",
+      "currency": "EUR"
+    },
+    "nextDraw": {
+      "drawIdentifier": "2023-01-24",
+      "lottery": "eurojackpot",
+      "drawDate": "2023-01-24T20:00:00+02:00",
+      "drawDateUtc": "2023-01-24T18:00:00Z",
+      "timeZone": "Europe/Helsinki",
+      "cutofftime": "2023-01-24T19:35:00+02:00",
+      "jackpot": {
+        "drawIdentifier": "2023-01-24",
+        "lottery": "eurojackpot",
+        "drawDate": "2023-01-24T20:00:00+02:00",
+        "currency": "EUR",
+        "jackpots": {
+          "WC_1": "80000000.00",
+          "WC_2": "1000000.00"
+        },
+        "jackpotSupported": true
+      }
+    },
+    "draws": []
+  },
+  {
+    "lottery": "spiel77",
+    "lastDraw": {
+      "drawIdentifier": "2023-01-21",
+      "lottery": "spiel77",
+      "drawDate": "2023-01-21T19:25:00+01:00",
+      "drawDateUtc": "2023-01-21T18:25:00Z",
+      "drawResult": {
+        "number": "0312244"
+      },
+      "currency": "EUR"
+    },
+    "nextDraw": {
+      "drawIdentifier": "2023-01-25",
+      "lottery": "spiel77",
+      "drawDate": "2023-01-25T18:25:00+01:00",
+      "drawDateUtc": "2023-01-25T17:25:00Z",
+      "timeZone": "Europe/Berlin"
+    },
+    "draws": []
+  },
+  {
+    "lottery": "super6",
+    "lastDraw": {
+      "drawIdentifier": "2023-01-21",
+      "lottery": "super6",
+      "drawDate": "2023-01-21T19:25:00+01:00",
+      "drawDateUtc": "2023-01-21T18:25:00Z",
+      "drawResult": {
+        "number": "112430"
+      },
+      "currency": "EUR"
+    },
+    "nextDraw": {
+      "drawIdentifier": "2023-01-25",
+      "lottery": "super6",
+      "drawDate": "2023-01-25T18:25:00+01:00",
+      "drawDateUtc": "2023-01-25T17:25:00Z",
+      "timeZone": "Europe/Berlin"
+    },
+    "draws": []
+  }
+]

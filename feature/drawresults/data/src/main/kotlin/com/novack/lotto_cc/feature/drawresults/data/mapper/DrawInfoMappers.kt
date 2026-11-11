@@ -2,6 +2,7 @@ package com.novack.lotto_cc.feature.drawresults.data.mapper
 
 import com.novack.lotto_cc.feature.drawresults.data.remote.LotteryIds
 import com.novack.lotto_cc.feature.drawresults.data.remote.dto.JackpotDto
+import com.novack.lotto_cc.feature.drawresults.data.remote.dto.LastDrawDto
 import com.novack.lotto_cc.feature.drawresults.data.remote.dto.LotteryDrawInfoDto
 import com.novack.lotto_cc.feature.drawresults.data.remote.dto.NextDrawDto
 import com.novack.lotto_cc.feature.drawresults.domain.model.LotteryDraw
@@ -61,15 +62,23 @@ private fun LotteryDrawInfoDto.toEurojackpotOrNull(): LotteryDraw.Eurojackpot? {
 
 /** The winning number of a supplementary game (Spiel 77, SUPER 6) and when it was drawn. */
 private class SupplementaryResult(val drawTime: Instant, val number: String) {
-    /** The number only if it was drawn with [draw], so an out-of-sync result is never shown. */
-    fun numberFor(draw: LotteryDraw): String? = number.takeIf { drawTime == draw.lastDrawTime }
+    /**
+     * The number only if it was drawn with [draw] (the API stamps both with the same time), so an
+     * out-of-sync result is never shown.
+     */
+    fun numberFor(draw: LotteryDraw.Lotto6aus49): String? = number.takeIf { drawTime == draw.lastDrawTime }
 }
 
-/** Null when [lottery] is missing or its number isn't exactly [digits] digits. */
-private fun List<LotteryDrawInfoDto>.supplementaryResult(lottery: String, digits: Int): SupplementaryResult? {
-    val lastDraw = firstOrNull { it.lottery == lottery }?.lastDraw ?: return null
-    val number = lastDraw.drawResult?.number?.takeIf { it.length == digits && it.all(Char::isDigit) } ?: return null
-    val drawTime = lastDraw.drawDateUtc?.toInstantOrNull() ?: return null
+/** The first valid entry for [lottery]: a string of exactly [digits] digits with a draw time. */
+private fun List<LotteryDrawInfoDto>.supplementaryResult(lottery: String, digits: Int): SupplementaryResult? =
+    asSequence()
+        .filter { it.lottery == lottery }
+        .firstNotNullOfOrNull { it.lastDraw?.toSupplementaryResultOrNull(digits) }
+
+private fun LastDrawDto.toSupplementaryResultOrNull(digits: Int): SupplementaryResult? {
+    val number = drawResult?.number?.takeIf { it.isString }?.content
+        ?.takeIf { it.length == digits && it.all(Char::isDigit) } ?: return null
+    val drawTime = drawDateUtc?.toInstantOrNull() ?: return null
     return SupplementaryResult(drawTime, number)
 }
 

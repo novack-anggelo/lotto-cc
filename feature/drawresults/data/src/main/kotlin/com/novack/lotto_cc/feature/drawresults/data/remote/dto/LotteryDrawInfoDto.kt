@@ -1,6 +1,7 @@
 package com.novack.lotto_cc.feature.drawresults.data.remote.dto
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * One lottery in the `drawinfo/aggregated` response. Only the fields the app uses are declared;
@@ -25,14 +26,15 @@ data class LastDrawDto(
 
 /**
  * `superNumber` is only sent for 6aus49, `euroNumbers` only for Eurojackpot, and `number` only for
- * Spiel 77 / SUPER 6 (a digit string such as `"0123456"`).
+ * Spiel 77 / SUPER 6 (a digit string such as `"0123456"`). `number` is read as any JSON value, so an
+ * unexpected type is dropped by the mapper instead of failing the whole response.
  */
 @Serializable
 data class DrawResultDto(
     val numbers: List<Int>? = null,
     val superNumber: Int? = null,
     val euroNumbers: List<Int>? = null,
-    val number: String? = null,
+    val number: JsonPrimitive? = null,
 )
 
 @Serializable
