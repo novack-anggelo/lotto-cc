@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Matches LottoTheme's background, so the window doesn't flash before Compose draws. -->
+    <!-- Keep in sync with LottoTheme's background (core/designsystem Theme.kt), so the window
+         doesn't flash before Compose draws. -->
     <color name="window_background">#FFF7F7F7</color>
 </resources>
