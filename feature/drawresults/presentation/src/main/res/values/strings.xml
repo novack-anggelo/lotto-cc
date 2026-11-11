@@ -1,6 +1,8 @@
 <resources>
     <string name="lottery_lotto6aus49" translatable="false">LOTTO 6aus49</string>
     <string name="lottery_eurojackpot" translatable="false">Eurojackpot</string>
+    <!-- Opened when a card is tapped. -->
+    <string name="lotto24_url" translatable="false">https://www.lotto24.de</string>
     <string name="bonus_superzahl">Super number</string>
     <string name="bonus_eurozahl">Euro number</string>
     <string name="jackpot_unit_millions">MILL</string>
