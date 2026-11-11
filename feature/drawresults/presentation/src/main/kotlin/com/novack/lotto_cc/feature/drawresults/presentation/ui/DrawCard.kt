@@ -53,6 +53,7 @@ import com.novack.lotto_cc.feature.drawresults.presentation.model.DrawCardUiMode
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
+import kotlin.math.hypot
 
 private val CardElevation = 4.dp
 
@@ -67,6 +68,9 @@ private val MinJackpotFontSize = 10.sp
 
 /** Horizontal run of the badge's slanted start edge. */
 private val BadgeSlant = 8.dp
+
+/** Rounding of the badge's top-start corner, where the slant meets the top edge. */
+private val BadgeCornerRadius = 6.dp
 
 /** One lottery: jackpot strip on the left; name, last draw, numbers and next draw on the right. */
 @Composable
@@ -241,7 +245,7 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .background(colors.badge, BadgeShape)
+                .background(colors.badgeSheen, BadgeShape)
                 // Start padding clears the slant, so wrapped text never sits on it.
                 .padding(
                     start = BadgeSlant + Spacing.xs,
@@ -253,7 +257,10 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
     }
 }
 
-/** A badge with a slanted start edge, like the mockup; mirrored in right-to-left layouts. */
+/**
+ * A badge with a slanted start edge and a rounded top-start corner, like the mockup; mirrored in
+ * right-to-left layouts.
+ */
 private object BadgeShape : Shape {
     override fun createOutline(
         size: Size,
@@ -261,22 +268,20 @@ private object BadgeShape : Shape {
         density: Density
     ): Outline {
         val slant = with(density) { BadgeSlant.toPx() }
-        val path = if (layoutDirection == LayoutDirection.Ltr) {
-            Path().apply {
-                moveTo(slant, 0f)
-                lineTo(size.width, 0f)
-                lineTo(size.width, size.height)
-                lineTo(0f, size.height)
-            }
-        } else {
-            Path().apply {
-                moveTo(0f, 0f)
-                lineTo(size.width - slant, 0f)
-                lineTo(size.width, size.height)
-                lineTo(0f, size.height)
-            }
+        val radius = with(density) { BadgeCornerRadius.toPx() }
+        val slantLength = hypot(slant, size.height)
+        // Drawn left to right; x is mirrored for right-to-left.
+        fun x(value: Float) = if (layoutDirection == LayoutDirection.Ltr) value else size.width - value
+        val path = Path().apply {
+            // From the slanted edge, [radius] below its top, curve onto the top edge.
+            moveTo(x(slant - slant / slantLength * radius), size.height / slantLength * radius)
+            quadraticTo(x(slant), 0f, x(slant + radius), 0f)
+            lineTo(x(size.width), 0f)
+            lineTo(x(size.width), size.height)
+            lineTo(x(0f), size.height)
+            close()
         }
-        return Outline.Generic(path.apply { close() })
+        return Outline.Generic(path)
     }
 }
 
