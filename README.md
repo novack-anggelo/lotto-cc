@@ -45,14 +45,16 @@ See [Known limitations](#known-limitations).
 
 ## Architecture
 ```
-:app ──► :feature:drawresults:presentation ──► :feature:drawresults:domain (pure Kotlin)
-  │                 │                                   ▲
-  │                 └──► :core:designsystem             │
-  └──► :feature:drawresults:data ───────────────────────┘
-                    ├──► :core:network
-                    └──► :core:common (pure Kotlin) ◄── :app (AndroidLogger)
-:core:testing — shared test utilities (MainDispatcherRule)
+module                              depends on
+:app                              → presentation, data, :core:designsystem, :core:network, :core:common
+:feature:drawresults:presentation → domain, :core:designsystem
+:feature:drawresults:data         → domain, :core:network, :core:common
+:feature:drawresults:domain       → (pure Kotlin, no dependencies)
+:core:common                      → (pure Kotlin, no dependencies)
+:core:testing                     → (test-only: MainDispatcherRule)
 ```
+`presentation`, `data` and `domain` are the `:feature:drawresults:*` modules. Nothing depends on
+`:app`, and `presentation` and `data` never see each other: `:app` wires them together with Koin.
 
 Each layer of the feature is its own Gradle module, so its dependencies are explicit and checked by
 the build:
@@ -117,7 +119,7 @@ the build:
 ```
 
 **CI.** GitHub Actions runs `assembleDebug compileReleaseKotlin test lintDebug` on every pull
-request to `dev`. `compileReleaseKotlin` catches debug-only APIs, such as `@Preview`, used from
+request to `dev` and every push to `dev`. `compileReleaseKotlin` catches debug-only APIs, such as `@Preview`, used from
 `main`. CI has no emulator, so the instrumented tests were run locally and their results posted in
 each PR.
 
@@ -133,25 +135,26 @@ each PR.
   - an automated code review, with every finding fixed or kept with a written reason
   - CI
   - my review and merge
-- **Releases:** `dev` is merged into `main` (#13).
+- **Releases:** `dev` is merged into `main` (PR #13).
 
 The implementation was written with **Claude Code** (an AI coding agent) under my direction. The next
 section is about that direction.
 
-## Developer interventions: questions, pushback and decisions
-The agent proposed and implemented; I reviewed every pull request before merging. These are the
-places where I questioned a choice, pushed back or set the direction, and what changed because of it.
+## Developer interventions: direction, standards and design
+The agent proposed and implemented; I owned the direction and reviewed every pull request before
+merging. This section shows where my interventions changed the outcome and what value they added.
+In the tables, `#N` is a pull request number; plan goals are written as "goal N".
 
 ### Setting the frame
-Before any code, I set the working rules:
-- Clean Architecture, modularisation, MVVM, use cases
+Before any code, I set the engineering rules:
+- Clean Architecture, modularisation, MVVM and use cases
 - Koin with the Compiler Plugin DSL
 - mapping through extension functions
 - unit and UI tests
-- small compilable commits and pull requests of about 400 lines at most, on worktrees, each waiting
-  for my approval
+- small compilable commits and pull requests of about 400 lines at most, on worktrees, each gated
+  by my approval
 
-In the clarification rounds I also chose:
+In the clarification rounds I fixed the scope and shape of the product:
 - **Scope:** Spiel 77 / SUPER 6, the website link and pull-to-refresh, but no widget.
 - **Data:** network only.
 - **Languages:** English and German.
@@ -159,45 +162,46 @@ In the clarification rounds I also chose:
 - **Tests:** instrumented UI tests.
 - **CI:** build, unit tests and lint.
 
-### Architecture questions
-| What I asked | What changed | PR |
+### Architecture decisions
+| Intervention | Value | PR |
 |---|---|---|
-| "Why are you using `OffsetDateTime`?" | The domain uses `Instant` from `drawDateUtc`, shown in the device's time zone. | #3 |
-| "Does it make sense to have `DomainResult`? Why not Kotlin's `Result`?" | We compared the trade-offs and kept `DomainResult`: typed errors, exhaustive `when`, no `runCatching` cancellation pitfalls. The reasoning is now recorded in the plan. | #3 |
-| "What is `AndroidFailureLogger` for? Why call it *Failure*Logger?" | The single-purpose failure logger became a general `Logger` interface in `:core:common`, implemented in `:app`. | #7 |
-| "Why do we need a list of supported lotteries?" | `LotteryIds.SUPPORTED` was removed; the request list sits where it's used. | #14 |
+| Replaced `OffsetDateTime` with `Instant` in the domain, and made the device's time zone the display rule | One unambiguous UTC model of time. The time zone is purely a presentation concern; no offset handling leaks into business logic. | #3 |
+| Turned the single-purpose failure logger into a general `Logger` in `:core:common` | One platform-independent logging abstraction for every module. Android stays at the edge (`:app`), and tests use a recording fake. | #7 |
+| Removed the `SUPPORTED` lotteries list | One less layer of indirection: the request is defined where it's used. | #14 |
 
-### Code-quality pushback
-| What I pushed back on | What changed | PR |
+### Code standards
+| Intervention | Value | PR |
 |---|---|---|
-| Previews in `main`, `@Preview` on the main classpath | Previews moved to `src/debug`, `ui-tooling-preview` became debug-only, and CI compiles release to enforce it. | #8 |
-| Several near-identical preview functions | One preview per component, fed by a `CollectionPreviewParameterProvider`. | #10 |
-| "Most of those `n.dp` seem like magic numbers" | A `Spacing` scale plus named or derived sizes, in a separate PR to keep #10 small. The refactor also exposed a right-to-left bug in the badge, which was fixed. | #11 |
-| "Why `BasicText`?" | Material 3 `Text` already supports `autoSize`; switched for consistency with the rest of the UI. | #10 |
-| `JsonPrimitive` and digit-count checks added "just in case" | "We need to trust the API contract": `String` as the API sends it, no extra validation. I made the change; the agent then fixed the stale docs and tests it left behind. | #14 |
-| `asSequence()` on a four-item list | Plain list operations. From then on, **Keep It Simple** was a rule for every later review. | #14 |
-| A URL constant inside the screen file | Moved to an untranslatable string resource. | #16 |
+| Kept preview tooling out of release code | Previews live in `src/debug` and `@Preview` is debug-only. CI compiles release, so the build enforces the rule instead of people having to remember it. | #8 |
+| Previews driven by `CollectionPreviewParameterProvider` | One preview per component covers every state, including edge cases (no bonus numbers, no jackpot), with no duplicated preview code. | #10 |
+| Design tokens instead of magic numbers | A `Spacing` scale plus named and derived sizes give the UI one consistent rhythm, and dependent sizes can't drift apart. The refactor also surfaced and fixed a right-to-left bug. | #11 |
+| Consistent Material components | Material 3 `Text` with `autoSize` instead of the lower-level `BasicText`. | #10 |
+| Trust the API contract | DTOs use the types the API documents, with no speculative validation. The mapping is simpler and shows exactly what the API sends. | #14 |
+| Keep It Simple as a project rule | No premature optimisation or speculative robustness; applied to every review that followed. | #14 |
+| Configuration out of UI code | The website URL is an untranslatable string resource, not a constant in a screen file. | #16 |
 
-### Design direction
-| My call | Result | PR |
+### Design exploration
+| Intervention | Value | PR |
 |---|---|---|
-| Restyled the balls and row myself: group the Superzahl / Eurozahlen in a darker pill instead of styling each ball | Simpler balls; then "all balls have the same style", so `BallStyle` was removed entirely. | #8 |
-| A metal effect instead of flat grey | A static brushed-silver row, chosen over an animated shimmer, with a gunmetal bonus group. | #8 |
-| Card: its own preview, metal on the jackpot strip, a paper-like background, elevation and shadow | Paper-toned surfaces for the whole theme, an elevated card and a metal strip. | #10 |
-| "I don't like the vertical metal effect; make it slanted like the balls" | Slanted stripes. The strip's stripes only shade away from the text colour, so the jackpot stays readable. | #10 |
-| The Eurojackpot strip looked too dark | A lighter bronze, kept within the WCAG AA contrast minimum (4.9:1). | #10 |
-| A bigger jackpot number, "MILL" instead of "million", no currency (like the mockup) | A large number with "MILL" / "MIO" below; screen readers still get the full amount. | #10 |
-| Spiel 77 / SUPER 6 label text and number colour | Adjusted directly on `dev` to match the mockup ("Spiel77:", "SUPER6:"). | `1abadaf` |
+| Reworked the ball row myself: the Superzahl / Eurozahlen get their own group | A clearer, calmer distinction with fewer styles. The per-ball style API (`BallStyle`) became unnecessary and was removed. | #8 |
+| Proposed a metallic finish for the ball row | Brushed silver with a gunmetal bonus group gives the balls a physical, lottery-machine feel. It's static, so it costs nothing at runtime. | #8 |
+| Gave the card a paper surface, elevation and its own previews | A warm, tactile card that reads like a printed ticket, with paper-toned surface colours across the whole theme. | #10 |
+| Explored the metal finish on the jackpot strip, iterating from a vertical sheen to slanted stripes that echo the ball row | One coherent visual language across the card. The stripes only shade away from the text colour, so the jackpot stays readable. | #10 |
+| Tuned the Eurojackpot tone | A lighter bronze that still meets WCAG AA contrast (4.9:1). | #10 |
+| Made the jackpot the headline: a large number with "MILL" / "MIO", like the mockup | The most important figure is readable at a glance, and screen readers still get the full amount with currency. | #10 |
+| Final polish of the Spiel 77 / SUPER 6 labels and number colour, directly on `dev` | A closer match to the mockup. | `1abadaf` |
 
 ### Scope and prioritisation
-- **Spacing refactor:** I moved it to its own PR (#11) instead of growing #10.
-- **Pull-to-refresh:** I deferred it in favour of the website link (#16) and this documentation.
-- **Release:** I released `dev` to `main` once the must-haves were done (#13).
+- **Spacing refactor:** split into its own PR (PR #11), so PR #10 stayed reviewable.
+- **Pull-to-refresh:** deferred (goal 13 in the plan) to deliver the website link (PR #16) and this
+  documentation first.
+- **Release:** `dev` was released to `main` as soon as the must-haves were complete (PR #13).
 
-**Effect overall:** these interventions made the code simpler (KISS, trust the contract, no magic
-numbers), kept the app's look close to the mockup while staying accessible, and turned one-off
-fixes into rules for the rest of the project, such as debug-only previews, preview providers and
-the spacing scale.
+**Overall value:** these interventions kept the codebase simple and consistent (KISS, trust the
+contract, design tokens) and gave the app a distinctive look that stays close to the mockup and
+accessible. They also turned individual review comments into project-wide rules, such as
+debug-only previews, preview providers and the spacing scale, so later work started from a higher
+baseline.
 
 ## Known limitations
 - **Pull-to-refresh** is planned but deferred (goal 13 in the plan).

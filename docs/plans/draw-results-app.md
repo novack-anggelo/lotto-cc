@@ -106,7 +106,7 @@ SUPER 6 has no jackpot). DTO fields are all nullable so one bad entry never fail
 
 ### UI state & behaviour
 `Loading` → `Content(cards)` | `Error(retry)`. Refresh failure while content is shown keeps the content and shows a
-snackbar. Jackpot shown abbreviated in the card's accent strip ("4 Mio" / "53 Mio"), next draw as a badge
+snackbar. Jackpot shown abbreviated in the card's accent strip ("4 MILL" / "4 MIO", no currency; screen readers get the full amount), next draw as a badge
 ("Nächste Ziehung: Mi., 11.11.2026").
 
 ## Implementation steps (one goal = one PR into `dev`)
