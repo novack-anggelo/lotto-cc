@@ -77,14 +77,23 @@ internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modi
         modifier = modifier.fillMaxWidth(),
     ) {
         // Grows with the font, capped so the numbers keep their room; same width on every card.
-        val stripWidth = JackpotStripWidth * LocalDensity.current.fontScale.coerceAtMost(MaxStripFontScale)
+        val stripWidth =
+            JackpotStripWidth * LocalDensity.current.fontScale.coerceAtMost(MaxStripFontScale)
         // The strip is drawn behind the row at the row's measured height (no intrinsic sizing, which
         // underestimates wrapped FlowRows and clipped the card at large font sizes).
         Row(Modifier.drawBehind { drawStrip(colors.accentSheen, stripWidth.toPx()) }) {
-            JackpotStrip(card.jackpot, colors.onAccent, Modifier.width(stripWidth).align(Alignment.Bottom))
+            JackpotStrip(
+                card.jackpot,
+                colors.onAccent,
+                Modifier
+                    .width(stripWidth)
+                    .align(Alignment.Bottom)
+            )
             Column(
                 verticalArrangement = Arrangement.spacedBy(Spacing.s),
-                modifier = Modifier.weight(1f).padding(Spacing.m),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(Spacing.m),
             ) {
                 // Spiel 77 / SUPER 6 sit next to the title, and wrap under it when there's no room.
                 FlowRow(
@@ -105,8 +114,18 @@ internal fun DrawCard(card: DrawCardUiModel, onClick: () -> Unit, modifier: Modi
                     }
                     // As wide as the widest line, so labels and numbers line up in two columns.
                     Column(Modifier.width(IntrinsicSize.Max)) {
-                        card.spiel77?.let { SupplementaryNumber(stringResource(R.string.spiel77), it) }
-                        card.super6?.let { SupplementaryNumber(stringResource(R.string.super6), it) }
+                        card.spiel77?.let {
+                            SupplementaryNumber(
+                                stringResource(R.string.spiel77),
+                                it
+                            )
+                        }
+                        card.super6?.let {
+                            SupplementaryNumber(
+                                stringResource(R.string.super6),
+                                it
+                            )
+                        }
                     }
                 }
                 DrawnNumbers(
@@ -126,7 +145,9 @@ private fun SupplementaryNumber(label: String, number: String) {
     val description = "$label: ${number.toList().joinToString(" ")}"
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
-        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = description },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clearAndSetSemantics { contentDescription = description },
     ) {
         Text(
             text = "$label:",
@@ -134,7 +155,12 @@ private fun SupplementaryNumber(label: String, number: String) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.weight(1f))
-        Text(text = number, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+        Text(
+            text = number,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -166,7 +192,11 @@ private fun JackpotStrip(jackpot: Money?, contentColor: Color, modifier: Modifie
                 JackpotLine(text.fullAmount, contentColor, MaterialTheme.typography.labelMedium)
             } else {
                 JackpotLine(text.millions, contentColor, MaterialTheme.typography.headlineSmall)
-                JackpotLine(stringResource(R.string.jackpot_unit_millions), contentColor, MaterialTheme.typography.titleSmall)
+                JackpotLine(
+                    stringResource(R.string.jackpot_unit_millions),
+                    contentColor,
+                    MaterialTheme.typography.titleSmall
+                )
             }
         }
     }
@@ -182,7 +212,10 @@ private fun JackpotLine(text: String, color: Color, style: TextStyle) {
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        autoSize = TextAutoSize.StepBased(minFontSize = MinJackpotFontSize, maxFontSize = style.fontSize),
+        autoSize = TextAutoSize.StepBased(
+            minFontSize = MinJackpotFontSize,
+            maxFontSize = style.fontSize
+        ),
     )
 }
 
@@ -208,14 +241,23 @@ private fun NextDraw(time: Instant, colors: LotteryColors, modifier: Modifier = 
             modifier = Modifier
                 .background(colors.badge, BadgeShape)
                 // Start padding clears the slant, so wrapped text never sits on it.
-                .padding(start = BadgeSlant + Spacing.xs, end = Spacing.s, top = Spacing.xxs, bottom = Spacing.xxs),
+                .padding(
+                    start = BadgeSlant + Spacing.xs,
+                    end = Spacing.s,
+                    top = Spacing.xxs,
+                    bottom = Spacing.xxs
+                ),
         )
     }
 }
 
 /** A badge with a slanted start edge, like the mockup; mirrored in right-to-left layouts. */
 private object BadgeShape : Shape {
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
         val slant = with(density) { BadgeSlant.toPx() }
         val path = if (layoutDirection == LayoutDirection.Ltr) {
             Path().apply {
