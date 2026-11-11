@@ -15,6 +15,8 @@ internal object PreviewData {
         bonusNumbers = listOf(7),
         nextDrawTime = Instant.parse("2023-01-25T17:25:00Z"),
         jackpot = Money(BigDecimal("6000000"), "EUR"),
+        spiel77 = "0312244",
+        super6 = "112430",
     )
 
     val eurojackpot = DrawCardUiModel(
