@@ -10,6 +10,7 @@ android {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":feature:drawresults:domain"))
+    implementation(project(":core:common:domain"))
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.koin.core.viewmodel)
