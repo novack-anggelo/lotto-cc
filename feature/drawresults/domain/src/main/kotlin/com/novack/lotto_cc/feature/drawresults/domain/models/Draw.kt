@@ -1,6 +1,6 @@
 package com.novack.lotto_cc.feature.drawresults.domain.models
 
-import java.math.BigDecimal
+import com.novack.lotto_cc.core.domain.models.Money
 import kotlin.time.Instant
 
 sealed interface Draw {
@@ -14,7 +14,7 @@ sealed interface Draw {
         override val additionalNumbers: List<Int>,
         override val nextDraw: NextDraw,
         override val date: Instant,
-        val additionalGames: Map<AdditionalGame, String>?
+        val additionalGames: List<AdditionalGame>?
     ) : Draw
 
     data class EuroJackpot(
@@ -27,5 +27,5 @@ sealed interface Draw {
 
 data class NextDraw(
     val date: Instant,
-    val jackpot: BigDecimal?
+    val jackpot: Money?
 )
