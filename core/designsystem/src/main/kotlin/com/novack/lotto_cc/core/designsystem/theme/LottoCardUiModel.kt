@@ -1,5 +1,6 @@
 package com.novack.lotto_cc.core.designsystem.theme
 
+import com.novack.lotto_cc.core.domain.models.Money
 import java.math.BigDecimal
 import kotlin.time.Instant
 
@@ -10,8 +11,8 @@ data class LottoCardUiModel(
     val numbers: List<Int>,
     val additionalNumbers: List<Int>,
     val nextDrawDate: Instant,
-    val jackpotValue: BigDecimal?,
-    val additionalGames: Map<AdditionalGameUi, String>? = null,
+    val jackpotValue: Money?,
+    val additionalGames: List<AdditionalGameUi>? = null,
 )
 
 enum class Lottery {
@@ -19,6 +20,8 @@ enum class Lottery {
     EuroJackpot
 }
 
-enum class AdditionalGameUi {
-    Spiel77, Super6
+sealed interface AdditionalGameUi {
+    val number: String
+    data class Spiel77(override val number: String) : AdditionalGameUi
+    data class Super6(override val number: String) : AdditionalGameUi
 }

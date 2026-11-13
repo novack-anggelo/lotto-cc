@@ -29,11 +29,11 @@ private fun Draw.Lotto6aus49.toUiModel() =
         additionalNumbers = additionalNumbers,
         nextDrawDate = nextDraw.date,
         jackpotValue = nextDraw.jackpot,
-        additionalGames = additionalGames?.mapKeys { it.key.toUiModel() },
+        additionalGames = additionalGames?.map { it.toUiModel() }
     )
 
 
 private fun AdditionalGame.toUiModel() = when (this) {
-    AdditionalGame.Spiel77 -> AdditionalGameUi.Spiel77
-    AdditionalGame.Super6 -> AdditionalGameUi.Super6
+    is AdditionalGame.Spiel77 -> AdditionalGameUi.Spiel77(number)
+    is AdditionalGame.Super6 -> AdditionalGameUi.Super6(number)
 }

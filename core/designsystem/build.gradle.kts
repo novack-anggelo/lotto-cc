@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.novack.lotto_cc.core.designsystem"
 }
+
+dependencies {
+    implementation(project(":core:common:domain"))
+}
