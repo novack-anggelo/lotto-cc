@@ -8,10 +8,11 @@ sealed interface DrawsUiState {
     data class Loaded(
         val draws: List<LottoCardUiModel>,
         val refreshing: Boolean = false,
-    )
+    ) : DrawsUiState
 }
 
-sealed interface Errors {
-    data object NoDraws : Errors
-    data object Others : Errors
+enum class Errors {
+    Network,
+    Server,
+    Unknown,
 }

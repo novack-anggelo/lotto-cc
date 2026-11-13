@@ -14,7 +14,7 @@ sealed interface Draw {
         override val additionalNumbers: List<Int>,
         override val nextDraw: NextDraw,
         override val date: Instant,
-        val additionalDraws: Map<String, String>?
+        val additionalGames: Map<AdditionalGame, String>?
     ) : Draw
 
     data class EuroJackpot(
