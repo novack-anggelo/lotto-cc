@@ -8,6 +8,8 @@ play the next draw.
 |---|---|---|
 | <img src="docs/screenshots/light.png" width="240" alt="Draw results, light theme"> | <img src="docs/screenshots/dark.png" width="240" alt="Draw results, dark theme"> | <img src="docs/screenshots/error.png" width="240" alt="No connection error with Retry"> |
 
+### (For no AI version, check [No AI branch](https://github.com/novack-anggelo/lotto-cc/tree/no-AI/feature/base-branch))
+
 ## Features
 **Must have (case study)**
 - Drawn numbers shown as balls; the **Superzahl** and the **Eurozahlen** are set apart in a darker
