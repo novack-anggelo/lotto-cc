@@ -1,7 +1,6 @@
-package com.novack.lotto_cc.core.designsystem.theme
+package com.novack.lotto_cc.feature.drawresults.presentation.models
 
 import com.novack.lotto_cc.core.domain.models.Money
-import java.math.BigDecimal
 import kotlin.time.Instant
 
 
