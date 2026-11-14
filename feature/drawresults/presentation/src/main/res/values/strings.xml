@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lotto6aus49" translatable="false">LOTTO 6aus49</string>
+    <string name="eurojackpot" translatable="false">Eurojackpot</string>
+    <string name="spiel77" translatable="false">Spiel77</string>
+    <string name="super6" translatable="false">SUPER6</string>
+    <string name="next_draw">Next draw:</string>
+    <string name="jackpot_millions">MIO</string>
+</resources>
