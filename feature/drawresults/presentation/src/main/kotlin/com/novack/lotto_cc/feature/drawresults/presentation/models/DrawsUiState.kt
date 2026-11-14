@@ -5,7 +5,7 @@ sealed interface DrawsUiState {
     data class Error(val reason: Errors) : DrawsUiState
     data object Loading : DrawsUiState
     data class Loaded(
-        val draws: List<LottoCardUiModel>,
+        val draws: List<DrawCardUiModel>,
         val refreshing: Boolean = false,
     ) : DrawsUiState
 }
