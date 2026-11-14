@@ -4,7 +4,7 @@ import com.novack.lotto_cc.core.domain.models.Money
 import kotlin.time.Instant
 
 
-data class LottoCardUiModel(
+data class DrawCardUiModel(
     val lottery: Lottery,
     val date: Instant,
     val numbers: List<Int>,

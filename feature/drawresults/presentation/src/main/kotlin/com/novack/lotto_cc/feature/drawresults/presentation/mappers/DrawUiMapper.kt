@@ -4,7 +4,7 @@ import com.novack.lotto_cc.feature.drawresults.domain.models.AdditionalGame
 import com.novack.lotto_cc.feature.drawresults.domain.models.Draw
 import com.novack.lotto_cc.feature.drawresults.presentation.models.AdditionalGameUi
 import com.novack.lotto_cc.feature.drawresults.presentation.models.Lottery
-import com.novack.lotto_cc.feature.drawresults.presentation.models.LottoCardUiModel
+import com.novack.lotto_cc.feature.drawresults.presentation.models.DrawCardUiModel
 
 fun Draw.toUiModel() = when (this) {
     is Draw.EuroJackpot -> toUiModel()
@@ -12,7 +12,7 @@ fun Draw.toUiModel() = when (this) {
 }
 
 private fun Draw.EuroJackpot.toUiModel() =
-    LottoCardUiModel(
+    DrawCardUiModel(
         lottery = Lottery.EuroJackpot,
         date = date,
         numbers = numbers,
@@ -22,7 +22,7 @@ private fun Draw.EuroJackpot.toUiModel() =
     )
 
 private fun Draw.Lotto6aus49.toUiModel() =
-    LottoCardUiModel(
+    DrawCardUiModel(
         lottery = Lottery.Lotto6aus49,
         date = date,
         numbers = numbers,

@@ -5,7 +5,7 @@ import com.novack.lotto_cc.feature.drawresults.presentation.lastDrawDate
 import com.novack.lotto_cc.feature.drawresults.presentation.lotto6aus49
 import com.novack.lotto_cc.feature.drawresults.presentation.models.AdditionalGameUi
 import com.novack.lotto_cc.feature.drawresults.presentation.models.Lottery
-import com.novack.lotto_cc.feature.drawresults.presentation.models.LottoCardUiModel
+import com.novack.lotto_cc.feature.drawresults.presentation.models.DrawCardUiModel
 import com.novack.lotto_cc.feature.drawresults.presentation.nextDrawDate
 import com.novack.lotto_cc.feature.drawresults.presentation.sixMillion
 import kotlin.test.Test
@@ -17,7 +17,7 @@ class DrawUiMapperTest {
     @Test
     fun `maps Lotto 6aus49 with super number and additional games`() {
         assertEquals(
-            LottoCardUiModel(
+            DrawCardUiModel(
                 lottery = Lottery.Lotto6aus49,
                 date = lastDrawDate,
                 numbers = listOf(4, 19, 24, 43, 44, 45),
@@ -36,7 +36,7 @@ class DrawUiMapperTest {
     @Test
     fun `maps Eurojackpot with euro numbers and no additional games`() {
         assertEquals(
-            LottoCardUiModel(
+            DrawCardUiModel(
                 lottery = Lottery.EuroJackpot,
                 date = lastDrawDate,
                 numbers = listOf(1, 12, 15, 31, 47),
