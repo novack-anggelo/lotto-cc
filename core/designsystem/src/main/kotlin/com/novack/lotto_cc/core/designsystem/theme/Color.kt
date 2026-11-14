@@ -15,12 +15,6 @@ data class LotteryColors(
     val badge: Color,
     val onBadge: Color,
 ) {
-    /** [accent] as a slanted metal sheen that keeps [onAccent] readable, for the jackpot strip. */
-    val accentSheen: Brush = slantedMetalSheen(accent, onAccent)
-
-    /** [badge] as a slanted metal sheen that keeps [onBadge] readable, for the next-draw badge. */
-    val badgeSheen: Brush = slantedMetalSheen(badge, onBadge)
-
     companion object {
         val Lotto6aus49 = LotteryColors(
             accent = Color(0xFFFFD500),
@@ -39,7 +33,7 @@ data class LotteryColors(
 }
 
 /** Ball colours are the same in light and dark theme, like real lottery balls. */
-internal object BallColors {
-    val RegularBackground = Color(0xFFF5F5F5)
+object BallColors {
+    val RegularBackground = Color(0xFFFFFFFF)
     val Content = Color(0xFF212121)
 }
