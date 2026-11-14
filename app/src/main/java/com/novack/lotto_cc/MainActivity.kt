@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.novack.lotto_cc.core.designsystem.theme.LottoTheme
+import com.novack.lotto_cc.feature.drawresults.presentation.screens.DrawsInfoRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LottoTheme {
-                Surface(modifier = Modifier.fillMaxSize()) { }
+                DrawsInfoRoute()
             }
         }
     }
