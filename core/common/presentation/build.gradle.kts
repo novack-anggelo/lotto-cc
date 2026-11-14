@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.novack.lotto_cc.common.presentation"
+    namespace = "com.novack.lotto_cc.core.common.presentation"
 }
 
 dependencies {
