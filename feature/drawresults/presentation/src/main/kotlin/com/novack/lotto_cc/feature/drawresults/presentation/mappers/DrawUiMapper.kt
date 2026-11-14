@@ -1,10 +1,10 @@
 package com.novack.lotto_cc.feature.drawresults.presentation.mappers
 
-import com.novack.lotto_cc.core.designsystem.theme.AdditionalGameUi
-import com.novack.lotto_cc.core.designsystem.theme.Lottery
-import com.novack.lotto_cc.core.designsystem.theme.LottoCardUiModel
 import com.novack.lotto_cc.feature.drawresults.domain.models.AdditionalGame
 import com.novack.lotto_cc.feature.drawresults.domain.models.Draw
+import com.novack.lotto_cc.feature.drawresults.presentation.models.AdditionalGameUi
+import com.novack.lotto_cc.feature.drawresults.presentation.models.Lottery
+import com.novack.lotto_cc.feature.drawresults.presentation.models.LottoCardUiModel
 
 fun Draw.toUiModel() = when (this) {
     is Draw.EuroJackpot -> toUiModel()
