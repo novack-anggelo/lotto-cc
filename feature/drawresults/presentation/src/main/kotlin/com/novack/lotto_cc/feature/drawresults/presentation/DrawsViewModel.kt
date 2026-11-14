@@ -17,6 +17,10 @@ class DrawsViewModel(private val useCase: GetDrawsUseCase) : ViewModel() {
     private val _state = MutableStateFlow<DrawsUiState>(DrawsUiState.Loading)
     val state = _state.asStateFlow()
 
+    init {
+        load()
+    }
+
     private fun fetch() {
         viewModelScope.launch {
             when (val draws = useCase()) {
